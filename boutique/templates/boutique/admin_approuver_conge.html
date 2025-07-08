@@ -1,0 +1,821 @@
+{% extends 'base.html' %}
+
+{% block titre %}Traiter Demande de Congé - Admin ArabiFit{% endblock %}
+
+{% block contenu %}
+<div class="admin-leave-approval-page">
+    <!-- En-tête moderne -->
+    <div class="page-header">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <div class="header-content">
+                        <h1 class="page-title">
+                            <i class="bi bi-calendar-check me-3"></i>Traiter Demande de Congé
+                        </h1>
+                        <div class="page-breadcrumb">
+                            <span class="employee-name">{{ conge.employe.user.get_full_name }}</span>
+                            <span class="separator">•</span>
+                            <span class="leave-type">{{ conge.get_type_conge_display }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 text-end">
+                    <div class="header-actions">
+                        <a href="{% url 'boutique:admin_rh' %}" class="btn btn-outline-light">
+                            <i class="bi bi-arrow-left me-2"></i>Retour RH
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid py-4">
+        <div class="row g-4">
+            <!-- Détails de la demande -->
+            <div class="col-lg-8">
+                <div class="leave-details-card">
+                    <div class="card-header">
+                        <h5 class="card-title">
+                            <i class="bi bi-info-circle me-2"></i>Détails de la Demande
+                        </h5>
+                        <div class="request-status">
+                            <span class="status-badge status-pending">
+                                <i class="bi bi-clock me-1"></i>En attente
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="leave-summary">
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <div class="info-group">
+                                        <label class="info-label">
+                                            <i class="bi bi-person me-2"></i>Employé
+                                        </label>
+                                        <div class="info-value">{{ conge.employe.user.get_full_name }}</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-group">
+                                        <label class="info-label">
+                                            <i class="bi bi-briefcase me-2"></i>Poste
+                                        </label>
+                                        <div class="info-value">{{ conge.employe.get_poste_display }}</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-group">
+                                        <label class="info-label">
+                                            <i class="bi bi-tag me-2"></i>Type de congé
+                                        </label>
+                                        <div class="info-value">
+                                            <span class="type-badge type-{{ conge.type_conge }}">
+                                                {{ conge.get_type_conge_display }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-group">
+                                        <label class="info-label">
+                                            <i class="bi bi-calendar-range me-2"></i>Durée
+                                        </label>
+                                        <div class="info-value">
+                                            <span class="duration-badge">{{ conge.nombre_jours }} jour{{ conge.nombre_jours|pluralize }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-group">
+                                        <label class="info-label">
+                                            <i class="bi bi-calendar-event me-2"></i>Date de début
+                                        </label>
+                                        <div class="info-value">{{ conge.date_debut|date:"d F Y" }}</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-group">
+                                        <label class="info-label">
+                                            <i class="bi bi-calendar-check me-2"></i>Date de fin
+                                        </label>
+                                        <div class="info-value">{{ conge.date_fin|date:"d F Y" }}</div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="info-group">
+                                        <label class="info-label">
+                                            <i class="bi bi-chat-text me-2"></i>Motif de la demande
+                                        </label>
+                                        <div class="motif-content">{{ conge.motif }}</div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="info-group">
+                                        <label class="info-label">
+                                            <i class="bi bi-clock-history me-2"></i>Demande faite le
+                                        </label>
+                                        <div class="info-value">{{ conge.date_creation|date:"d F Y à H:i" }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formulaire de traitement -->
+                <div class="approval-form-card">
+                    <div class="card-header">
+                        <h5 class="card-title">
+                            <i class="bi bi-check-circle me-2"></i>Traitement de la Demande
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" class="approval-form">
+                            {% csrf_token %}
+                            <div class="form-section">
+                                <label class="form-label">
+                                    <i class="bi bi-journal-text me-2"></i>Commentaire administratif
+                                </label>
+                                <textarea name="commentaire" class="form-control modern-textarea" rows="4"
+                                          placeholder="Ajoutez un commentaire sur votre décision (optionnel)..."></textarea>
+                                <div class="form-text">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    Ce commentaire sera visible par l'employé et conservé dans l'historique
+                                </div>
+                            </div>
+
+                            <div class="approval-actions">
+                                <button type="submit" name="action" value="approuver" class="btn btn-success-modern btn-lg">
+                                    <i class="bi bi-check-circle me-2"></i>Approuver la demande
+                                </button>
+                                <button type="submit" name="action" value="refuser" class="btn btn-danger-modern btn-lg">
+                                    <i class="bi bi-x-circle me-2"></i>Refuser la demande
+                                </button>
+                                <a href="{% url 'boutique:admin_rh' %}" class="btn btn-outline-secondary btn-lg">
+                                    <i class="bi bi-arrow-left me-2"></i>Retour sans traiter
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Informations employé et historique -->
+            <div class="col-lg-4">
+                <div class="sticky-sidebar">
+                    <!-- Profil employé -->
+                    <div class="employee-profile-card">
+                        <div class="card-header">
+                            <h5 class="card-title">
+                                <i class="bi bi-person me-2"></i>Profil Employé
+                            </h5>
+                        </div>
+                        <div class="card-body text-center">
+                            <div class="employee-avatar-large">
+                                {% if conge.employe.photo %}
+                                    <img src="{{ conge.employe.photo.url }}" alt="{{ conge.employe.user.get_full_name }}">
+                                {% else %}
+                                    <div class="avatar-placeholder-large">
+                                        <i class="bi bi-person"></i>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <h6 class="employee-name">{{ conge.employe.user.get_full_name }}</h6>
+                            <p class="employee-position">{{ conge.employe.get_poste_display }}</p>
+
+                            <div class="employee-details">
+                                <div class="detail-item">
+                                    <label>N° Employé</label>
+                                    <value>{{ conge.employe.numero_employe }}</value>
+                                </div>
+                                <div class="detail-item">
+                                    <label>Email</label>
+                                    <value>{{ conge.employe.user.email }}</value>
+                                </div>
+                                <div class="detail-item">
+                                    <label>Téléphone</label>
+                                    <value>{{ conge.employe.telephone }}</value>
+                                </div>
+                                <div class="detail-item">
+                                    <label>Date d'embauche</label>
+                                    <value>{{ conge.employe.date_embauche|date:"d F Y" }}</value>
+                                </div>
+                                <div class="detail-item">
+                                    <label>Statut</label>
+                                    <value>
+                                        {% if conge.employe.statut == 'actif' %}
+                                            <span class="status-badge status-active">Actif</span>
+                                        {% elif conge.employe.statut == 'conge' %}
+                                            <span class="status-badge status-leave">En congé</span>
+                                        {% endif %}
+                                    </value>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Calendrier visuel -->
+                    <div class="leave-calendar-card">
+                        <div class="card-header">
+                            <h5 class="card-title">
+                                <i class="bi bi-calendar-event me-2"></i>Période Demandée
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="calendar-visual">
+                                <div class="calendar-period">
+                                    <div class="period-start">
+                                        <div class="date-number">{{ conge.date_debut|date:"d" }}</div>
+                                        <div class="date-month">{{ conge.date_debut|date:"M Y" }}</div>
+                                        <div class="date-label">Début</div>
+                                    </div>
+                                    <div class="period-duration">
+                                        <div class="duration-line"></div>
+                                        <div class="duration-text">{{ conge.nombre_jours }} jour{{ conge.nombre_jours|pluralize }}</div>
+                                    </div>
+                                    <div class="period-end">
+                                        <div class="date-number">{{ conge.date_fin|date:"d" }}</div>
+                                        <div class="date-month">{{ conge.date_fin|date:"M Y" }}</div>
+                                        <div class="date-label">Fin</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Historique des congés -->
+                    <div class="leave-history-card">
+                        <div class="card-header">
+                            <h5 class="card-title">
+                                <i class="bi bi-clock-history me-2"></i>Congés Récents
+                            </h5>
+                        </div>
+                        <div class="card-body p-0">
+                            {% for conge_historique in conge.employe.conges.all|slice:":5" %}
+                                {% if conge_historique != conge %}
+                                <div class="history-item">
+                                    <div class="history-type">
+                                        <span class="type-badge type-{{ conge_historique.type_conge }}">
+                                            {{ conge_historique.get_type_conge_display }}
+                                        </span>
+                                    </div>
+                                    <div class="history-period">
+                                        {{ conge_historique.date_debut|date:"d/m/Y" }} - {{ conge_historique.date_fin|date:"d/m/Y" }}
+                                    </div>
+                                    <div class="history-status">
+                                        {% if conge_historique.statut == 'approuve' %}
+                                            <span class="status-badge status-approved">Approuvé</span>
+                                        {% elif conge_historique.statut == 'refuse' %}
+                                            <span class="status-badge status-rejected">Refusé</span>
+                                        {% elif conge_historique.statut == 'en_attente' %}
+                                            <span class="status-badge status-pending">En attente</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% endif %}
+                            {% empty %}
+                            <div class="empty-history">
+                                <i class="bi bi-calendar"></i>
+                                <p>Aucun congé précédent</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Variables */
+:root {
+    --admin-primary: #667eea;
+    --admin-success: #28a745;
+    --admin-warning: #ffc107;
+    --admin-danger: #dc3545;
+    --admin-info: #17a2b8;
+    --admin-secondary: #6c757d;
+    --admin-dark: #343a40;
+    --admin-light: #f8f9fa;
+    --admin-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+    --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+    --border-radius: 12px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Page générale */
+.admin-leave-approval-page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+/* En-tête */
+.page-header {
+    background: var(--admin-gradient);
+    color: white;
+    padding: 2rem 0;
+}
+
+.page-title {
+    font-size: 2.25rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.page-breadcrumb {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+.employee-name {
+    font-weight: 600;
+    background: rgba(255,255,255,0.2);
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+}
+
+.separator {
+    margin: 0 1rem;
+}
+
+/* Cartes */
+.leave-details-card,
+.approval-form-card,
+.employee-profile-card,
+.leave-calendar-card,
+.leave-history-card {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+}
+
+.card-header {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--admin-dark);
+    margin-bottom: 0;
+}
+
+.card-body {
+    padding: 2rem;
+}
+
+/* Résumé de congé */
+.leave-summary {
+    background: rgba(102, 126, 234, 0.05);
+    border-radius: 8px;
+    padding: 1.5rem;
+    border-left: 4px solid var(--admin-primary);
+}
+
+.info-group {
+    margin-bottom: 1.5rem;
+}
+
+.info-group:last-child {
+    margin-bottom: 0;
+}
+
+.info-label {
+    font-weight: 600;
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.info-value {
+    font-weight: 500;
+    color: var(--admin-dark);
+    font-size: 1rem;
+}
+
+.motif-content {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    font-style: italic;
+    line-height: 1.6;
+}
+
+/* Badges */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.375rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-pending { background: rgba(255, 193, 7, 0.2); color: #856404; }
+.status-approved { background: rgba(40, 167, 69, 0.2); color: #155724; }
+.status-rejected { background: rgba(220, 53, 69, 0.2); color: #721c24; }
+.status-active { background: rgba(40, 167, 69, 0.2); color: #155724; }
+.status-leave { background: rgba(255, 193, 7, 0.2); color: #856404; }
+
+.type-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.type-annuel { background: rgba(40, 167, 69, 0.2); color: #155724; }
+.type-maladie { background: rgba(220, 53, 69, 0.2); color: #721c24; }
+.type-maternite { background: rgba(102, 126, 234, 0.2); color: #4c63d2; }
+.type-formation { background: rgba(23, 162, 184, 0.2); color: #0c5460; }
+
+.duration-badge {
+    background: var(--admin-warning);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+/* Formulaire d'approbation */
+.approval-form {
+    max-width: 100%;
+}
+
+.form-section {
+    margin-bottom: 2rem;
+}
+
+.modern-textarea {
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 1rem;
+    transition: var(--transition);
+    background: white;
+    font-size: 0.95rem;
+    resize: vertical;
+}
+
+.modern-textarea:focus {
+    border-color: var(--admin-primary);
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.approval-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.btn-success-modern {
+    background: linear-gradient(135deg, var(--admin-success), rgba(40, 167, 69, 0.8));
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem 2rem;
+    font-weight: 600;
+    transition: var(--transition);
+    color: white;
+}
+
+.btn-success-modern:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    color: white;
+}
+
+.btn-danger-modern {
+    background: linear-gradient(135deg, var(--admin-danger), rgba(220, 53, 69, 0.8));
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem 2rem;
+    font-weight: 600;
+    transition: var(--transition);
+    color: white;
+}
+
+.btn-danger-modern:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    color: white;
+}
+
+/* Profil employé */
+.employee-avatar-large {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin: 0 auto 1rem;
+    overflow: hidden;
+    border: 4px solid var(--admin-primary);
+}
+
+.employee-avatar-large img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatar-placeholder-large {
+    width: 100%;
+    height: 100%;
+    background: var(--admin-gradient);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 2.5rem;
+}
+
+.employee-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--admin-dark);
+    margin-bottom: 0.5rem;
+}
+
+.employee-position {
+    font-size: 1rem;
+    color: var(--admin-primary);
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.employee-details {
+    text-align: left;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.detail-item:last-child {
+    border-bottom: none;
+}
+
+.detail-item label {
+    font-weight: 500;
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin-bottom: 0;
+}
+
+.detail-item value {
+    font-weight: 500;
+    color: var(--admin-dark);
+    text-align: right;
+}
+
+/* Calendrier visuel */
+.calendar-visual {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.calendar-period {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.period-start,
+.period-end {
+    text-align: center;
+    background: white;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: var(--shadow-sm);
+    min-width: 80px;
+}
+
+.date-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--admin-primary);
+    margin-bottom: 0.25rem;
+}
+
+.date-month {
+    font-size: 0.8rem;
+    color: #6c757d;
+    margin-bottom: 0.25rem;
+}
+
+.date-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--admin-dark);
+    text-transform: uppercase;
+}
+
+.period-duration {
+    flex-grow: 1;
+    text-align: center;
+    position: relative;
+    margin: 0 1rem;
+}
+
+.duration-line {
+    height: 2px;
+    background: var(--admin-primary);
+    margin-bottom: 0.5rem;
+    position: relative;
+}
+
+.duration-line::before,
+.duration-line::after {
+    content: '';
+    position: absolute;
+    top: -3px;
+    width: 8px;
+    height: 8px;
+    background: var(--admin-primary);
+    border-radius: 50%;
+}
+
+.duration-line::before {
+    left: 0;
+}
+
+.duration-line::after {
+    right: 0;
+}
+
+.duration-text {
+    font-weight: 600;
+    color: var(--admin-primary);
+    font-size: 0.9rem;
+}
+
+/* Historique des congés */
+.history-item {
+    padding: 1rem 2rem;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    transition: var(--transition);
+}
+
+.history-item:hover {
+    background: rgba(102, 126, 234, 0.05);
+}
+
+.history-item:last-child {
+    border-bottom: none;
+}
+
+.history-type {
+    margin-bottom: 0.5rem;
+}
+
+.history-period {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+}
+
+.history-status {
+    text-align: right;
+}
+
+.empty-history {
+    text-align: center;
+    padding: 2rem;
+    color: #6c757d;
+}
+
+.empty-history i {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.empty-history p {
+    margin-bottom: 0;
+    font-size: 0.9rem;
+}
+
+/* Sidebar sticky */
+.sticky-sidebar {
+    position: sticky;
+    top: 2rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .page-title {
+        font-size: 1.75rem;
+    }
+
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    .approval-actions {
+        flex-direction: column;
+    }
+
+    .sticky-sidebar {
+        position: static;
+    }
+
+    .calendar-period {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .period-duration {
+        margin: 0;
+        order: -1;
+    }
+
+    .duration-line {
+        width: 2px;
+        height: 50px;
+        margin: 0 auto 0.5rem;
+    }
+
+    .duration-line::before,
+    .duration-line::after {
+        left: -3px;
+        top: 0;
+    }
+
+    .duration-line::after {
+        top: auto;
+        bottom: 0;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animation d'entrée
+    const cards = document.querySelectorAll('.leave-details-card, .approval-form-card, .employee-profile-card, .leave-calendar-card, .leave-history-card');
+
+    cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(30px)';
+
+        setTimeout(() => {
+            card.style.transition = 'all 0.6s ease-out';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, index * 200);
+    });
+
+    // Confirmation avant soumission
+    const form = document.querySelector('.approval-form');
+    const approveBtn = document.querySelector('button[value="approuver"]');
+    const rejectBtn = document.querySelector('button[value="refuser"]');
+
+    if (form && approveBtn && rejectBtn) {
+        approveBtn.addEventListener('click', function(e) {
+            if (!confirm('Êtes-vous sûr de vouloir approuver cette demande de congé ?')) {
+                e.preventDefault();
+            }
+        });
+
+        rejectBtn.addEventListener('click', function(e) {
+            if (!confirm('Êtes-vous sûr de vouloir refuser cette demande de congé ?')) {
+                e.preventDefault();
+            }
+        });
+    }
+
+    // Animation du calendrier visuel
+    const durationLine = document.querySelector('.duration-line');
+    if (durationLine) {
+        setTimeout(() => {
+            durationLine.style.transform = 'scaleX(0)';
+            durationLine.style.transformOrigin = 'left';
+            durationLine.style.transition = 'transform 1s ease-out';
+
+            setTimeout(() => {
+                durationLine.style.transform = 'scaleX(1)';
+            }, 500);
+        }, 1000);
+    }
+});
+</script>
+{% endblock %}

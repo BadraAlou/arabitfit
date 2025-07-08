@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block titre %}Paiement échoué - ArabiFit{% endblock %}
+
+{% block contenu %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card card-custom shadow-lg">
+                <div class="card-body text-center py-5">
+                    <div class="mb-4">
+                        <i class="bi bi-x-circle-fill text-danger" style="font-size: 5rem;"></i>
+                    </div>
+
+                    <h1 class="display-6 fw-bold mb-3" style="color: var(--couleur-marron);">
+                        Paiement échoué
+                    </h1>
+
+                    <p class="lead text-muted mb-4">
+                        Le paiement de votre commande n'a pas pu être traité. Veuillez réessayer.
+                    </p>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="bg-light p-3 rounded">
+                                <h6 class="fw-bold mb-2" style="color: var(--couleur-marron);">Numéro de commande</h6>
+                                <span class="fs-5 fw-semibold">{{ commande.numero }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mt-3 mt-md-0">
+                            <div class="bg-light p-3 rounded">
+                                <h6 class="fw-bold mb-2" style="color: var(--couleur-marron);">Montant</h6>
+                                <span class="fs-5 fw-semibold prix-produit">{{ commande.total }}€</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-danger border-0 mb-4">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-exclamation-triangle me-3"></i>
+                            <div class="text-start">
+                                <strong>Causes possibles :</strong><br>
+                                • Solde insuffisant sur votre compte<br>
+                                • Informations de paiement incorrectes<br>
+                                • Problème de connexion temporaire<br>
+                                • Limite de transaction dépassée
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-3 justify-content-center flex-wrap">
+                        <a href="{% url 'boutique:paiement' commande.numero %}" class="btn btn-primary-custom btn-lg">
+                            <i class="bi bi-arrow-clockwise me-2"></i>Réessayer le paiement
+                        </a>
+                        <a href="{% url 'boutique:detail_commande' commande.numero %}" class="btn btn-secondary-custom btn-lg">
+                            <i class="bi bi-receipt me-2"></i>Voir la commande
+                        </a>
+                        <a href="{% url 'boutique:mes_commandes' %}" class="btn btn-outline-primary btn-lg">
+                            <i class="bi bi-list me-2"></i>Mes commandes
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Aide et support -->
+            <div class="row mt-4">
+                <div class="col-md-4">
+                    <div class="card bg-light border-0 h-100">
+                        <div class="card-body text-center">
+                            <i class="bi bi-headset text-primary mb-3" style="font-size: 2.5rem;"></i>
+                            <h6 class="fw-bold mb-2">Support client</h6>
+                            <small class="text-muted">Contactez-nous pour de l'aide</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mt-3 mt-md-0">
+                    <div class="card bg-light border-0 h-100">
+                        <div class="card-body text-center">
+                            <i class="bi bi-question-circle text-info mb-3" style="font-size: 2.5rem;"></i>
+                            <h6 class="fw-bold mb-2">FAQ</h6>
+                            <small class="text-muted">Questions fréquentes</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mt-3 mt-md-0">
+                    <div class="card bg-light border-0 h-100">
+                        <div class="card-body text-center">
+                            <i class="bi bi-shield-check text-success mb-3" style="font-size: 2.5rem;"></i>
+                            <h6 class="fw-bold mb-2">Sécurité</h6>
+                            <small class="text-muted">Paiements 100% sécurisés</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

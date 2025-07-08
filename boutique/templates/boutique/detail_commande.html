@@ -1,0 +1,370 @@
+{% extends 'base.html' %}
+
+{% block titre %}Commande {{ commande.numero }} - ArabiFit{% endblock %}
+
+{% block contenu %}
+<div class="container-fluid py-4">
+    <!-- En-tête moderne -->
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h1 class="display-5 fw-bold mb-2" style="color: var(--couleur-marron);">
+                Commande {{ commande.numero }}
+            </h1>
+            <p class="text-muted">Passée le {{ commande.date_creation|date:"d F Y à H:i" }}</p>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Détails de la commande -->
+        <div class="col-xl-8 col-lg-7">
+            <!-- Statut de la commande -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-0 py-4">
+                    <h5 class="mb-0 fw-bold" style="color: var(--couleur-marron);">
+                        <i class="bi bi-info-circle me-2"></i>Statut de la commande
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <div class="me-3">
+                                    {% if commande.statut == 'en_attente' %}
+                                        <div class="rounded-circle bg-warning d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                            <i class="bi bi-clock text-white" style="font-size: 1.5rem;"></i>
+                                        </div>
+                                    {% elif commande.statut == 'confirmee' %}
+                                        <div class="rounded-circle bg-success d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                            <i class="bi bi-check-circle text-white" style="font-size: 1.5rem;"></i>
+                                        </div>
+                                    {% elif commande.statut == 'en_preparation' %}
+                                        <div class="rounded-circle bg-info d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                            <i class="bi bi-box-seam text-white" style="font-size: 1.5rem;"></i>
+                                        </div>
+                                    {% elif commande.statut == 'expediee' %}
+                                        <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                            <i class="bi bi-truck text-white" style="font-size: 1.5rem;"></i>
+                                        </div>
+                                    {% elif commande.statut == 'en_livraison' %}
+                                        <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                            <i class="bi bi-geo-alt text-white" style="font-size: 1.5rem;"></i>
+                                        </div>
+                                    {% elif commande.statut == 'livree' %}
+                                        <div class="rounded-circle bg-success d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                            <i class="bi bi-house-door text-white" style="font-size: 1.5rem;"></i>
+                                        </div>
+                                    {% elif commande.statut == 'annulee' %}
+                                        <div class="rounded-circle bg-danger d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                            <i class="bi bi-x-circle text-white" style="font-size: 1.5rem;"></i>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <h6 class="mb-1 fw-bold">
+                                        {% if commande.statut == 'en_attente' %}
+                                            En attente de paiement
+                                        {% elif commande.statut == 'confirmee' %}
+                                            Confirmée et payée
+                                        {% elif commande.statut == 'en_preparation' %}
+                                            En préparation
+                                        {% elif commande.statut == 'expediee' %}
+                                            Expédiée
+                                        {% elif commande.statut == 'en_livraison' %}
+                                            En cours de livraison
+                                        {% elif commande.statut == 'livree' %}
+                                            Livrée
+                                        {% elif commande.statut == 'annulee' %}
+                                            Annulée
+                                        {% endif %}
+                                    </h6>
+                                    <small class="text-muted">Dernière mise à jour : {{ commande.date_modification|date:"d/m/Y H:i" }}</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                            {% if commande.statut == 'en_attente' %}
+                                <a href="{% url 'boutique:paiement' commande.numero %}" class="btn btn-warning">
+                                    <i class="bi bi-credit-card me-2"></i>Procéder au paiement
+                                </a>
+                            {% elif commande.statut in 'confirmee,en_preparation,expediee,en_livraison,livree' %}
+                                <a href="{% url 'boutique:telecharger_facture' commande.numero %}" class="btn btn-success">
+                                    <i class="bi bi-download me-2"></i>Télécharger la facture
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Barre de progression -->
+                    <div class="mt-4">
+                        <div class="progress-timeline">
+                            <div class="step {% if commande.statut != 'annulee' %}completed{% endif %}">
+                                <div class="step-icon">
+                                    <i class="bi bi-cart-check"></i>
+                                </div>
+                                <div class="step-label">Commandé</div>
+                            </div>
+                            <div class="step {% if commande.statut in 'confirmee,en_preparation,expediee,en_livraison,livree' %}completed{% endif %}">
+                                <div class="step-icon">
+                                    <i class="bi bi-credit-card"></i>
+                                </div>
+                                <div class="step-label">Payé</div>
+                            </div>
+                            <div class="step {% if commande.statut in 'en_preparation,expediee,en_livraison,livree' %}completed{% endif %}">
+                                <div class="step-icon">
+                                    <i class="bi bi-box-seam"></i>
+                                </div>
+                                <div class="step-label">Préparé</div>
+                            </div>
+                            <div class="step {% if commande.statut in 'expediee,en_livraison,livree' %}completed{% endif %}">
+                                <div class="step-icon">
+                                    <i class="bi bi-truck"></i>
+                                </div>
+                                <div class="step-label">Expédié</div>
+                            </div>
+                            <div class="step {% if commande.statut == 'livree' %}completed{% endif %}">
+                                <div class="step-icon">
+                                    <i class="bi bi-house-door"></i>
+                                </div>
+                                <div class="step-label">Livré</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Informations de livraison -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-0 py-4">
+                    <h5 class="mb-0 fw-bold" style="color: var(--couleur-marron);">
+                        <i class="bi bi-geo-alt me-2"></i>Informations de livraison
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold mb-3">Adresse de livraison</h6>
+                            <div class="mb-2"><strong>{{ commande.nom_complet }}</strong></div>
+                            <div class="mb-2">{{ commande.adresse }}</div>
+                            <div class="mb-2">{{ commande.code_postal }} {{ commande.ville }}</div>
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-telephone me-2 text-primary"></i>
+                                {{ commande.telephone }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-bold mb-3">Contact et paiement</h6>
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-envelope me-2 text-primary"></i>
+                                {{ commande.email }}
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-credit-card me-2 text-success"></i>
+                                {% if commande.methode_paiement == 'stripe' %}
+                                    Carte bancaire (Stripe)
+                                {% elif commande.methode_paiement == 'cinetpay' %}
+                                    Mobile Money (CinetPay)
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Articles commandés -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0 py-4">
+                    <h5 class="mb-0 fw-bold" style="color: var(--couleur-marron);">
+                        <i class="bi bi-box me-2"></i>Articles commandés
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    {% for item in commande.items.all %}
+                    <div class="border-bottom p-4 {% if forloop.last %}border-0{% endif %}">
+                        <div class="row align-items-center">
+                            <div class="col-md-2 col-3">
+                                {% if item.produit.image %}
+                                    <img src="{{ item.produit.image.url }}" alt="{{ item.nom_produit }}"
+                                         class="img-fluid rounded-3" style="height: 80px; width: 80px; object-fit: cover;">
+                                {% else %}
+                                    <div class="rounded-3 bg-light d-flex align-items-center justify-content-center"
+                                         style="height: 80px; width: 80px;">
+                                        <i class="bi bi-box text-muted" style="font-size: 1.5rem;"></i>
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6 col-9">
+                                <h6 class="fw-bold mb-2">{{ item.nom_produit }}</h6>
+                                <div class="text-muted small">
+                                    <div>Prix unitaire : {{ item.prix_unitaire|floatformat:0 }} XOF</div>
+                                    <div>Quantité : {{ item.quantite }}</div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2 col-6 text-center">
+                                <span class="fw-bold fs-5" style="color: var(--couleur-rose-fonce);">
+                                    {{ item.total|floatformat:0 }} XOF
+                                </span>
+                            </div>
+
+                            <div class="col-md-2 col-6 text-end">
+                                {% if item.produit %}
+                                    <a href="{% url 'boutique:detail_produit' item.produit.pk %}" class="btn btn-outline-primary btn-sm">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Résumé et actions -->
+        <div class="col-xl-4 col-lg-5">
+            <div class="sticky-top" style="top: 100px;">
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white border-0 py-4">
+                        <h5 class="mb-0 fw-bold text-center" style="color: var(--couleur-marron);">
+                            Résumé
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Total -->
+                        <div class="text-center mb-4 p-4 rounded"
+                             style="background: linear-gradient(135deg, rgba(255, 182, 193, 0.2), rgba(255, 192, 203, 0.1));">
+                            <div class="mb-2">
+                                <small class="text-muted">Total de la commande</small>
+                            </div>
+                            <div class="fw-bold" style="font-size: 2rem; color: var(--couleur-rose-fonce);">
+                                {{ commande.total|floatformat:0 }} XOF
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="d-grid gap-3">
+                            {% if commande.statut == 'en_attente' %}
+                                <a href="{% url 'boutique:paiement' commande.numero %}" class="btn btn-warning btn-lg">
+                                    <i class="bi bi-credit-card me-2"></i>Payer maintenant
+                                </a>
+                            {% elif commande.statut in 'confirmee,en_preparation,expediee,en_livraison,livree' %}
+                                <a href="{% url 'boutique:telecharger_facture' commande.numero %}" class="btn btn-success btn-lg">
+                                    <i class="bi bi-download me-2"></i>Télécharger la facture
+                                </a>
+                            {% endif %}
+
+                            <a href="{% url 'boutique:mes_commandes' %}" class="btn btn-secondary-custom">
+                                <i class="bi bi-list me-2"></i>Mes commandes
+                            </a>
+
+                            <a href="{% url 'boutique:liste_produits' %}" class="btn btn-outline-primary">
+                                <i class="bi bi-shop me-2"></i>Continuer les achats
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Informations de livraison -->
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <h6 class="fw-bold mb-3" style="color: var(--couleur-marron);">Livraison</h6>
+                        <div class="row">
+                            <div class="col-4">
+                                <i class="bi bi-truck text-success mb-2" style="font-size: 1.5rem;"></i>
+                                <small class="d-block">Gratuite</small>
+                            </div>
+                            <div class="col-4">
+                                <i class="bi bi-clock text-info mb-2" style="font-size: 1.5rem;"></i>
+                                <small class="d-block">3-5 jours</small>
+                            </div>
+                            <div class="col-4">
+                                <i class="bi bi-shield-check text-primary mb-2" style="font-size: 1.5rem;"></i>
+                                <small class="d-block">Suivi inclus</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.progress-timeline {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    margin: 20px 0;
+}
+
+.progress-timeline::before {
+    content: '';
+    position: absolute;
+    top: 25px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #e0e0e0;
+    z-index: 1;
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+    background: white;
+    padding: 0 10px;
+}
+
+.step-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #e0e0e0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
+}
+
+.step-icon i {
+    font-size: 1.2rem;
+    color: #666;
+}
+
+.step.completed .step-icon {
+    background: var(--couleur-vert-menthe);
+}
+
+.step.completed .step-icon i {
+    color: white;
+}
+
+.step-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--couleur-marron);
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .step-label {
+        font-size: 0.7rem;
+    }
+
+    .step-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .step-icon i {
+        font-size: 1rem;
+    }
+}
+</style>
+{% endblock %}

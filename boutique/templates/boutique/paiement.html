@@ -1,0 +1,1057 @@
+{% extends 'base.html' %}
+
+{% block titre %}Paiement - ArabiFit{% endblock %}
+
+{% block contenu %}
+<div class="modern-payment-page">
+    <!-- En-tête moderne -->
+    <div class="payment-header">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 text-center">
+                    <h1 class="payment-title">Paiement Sécurisé</h1>
+                    <div class="payment-info">
+                        <span class="order-number">Commande {{ commande.numero }}</span>
+                        <span class="separator">•</span>
+                        <span class="order-amount">{{ commande.total|floatformat:0 }} XOF</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container py-5">
+        <div class="row g-4">
+            <!-- Formulaire de paiement -->
+            <div class="col-xl-8 col-lg-7">
+                {% if commande.methode_paiement == 'stripe' %}
+                    <!-- Paiement Stripe -->
+                    <div class="payment-method-card stripe-card">
+                        <div class="method-header">
+                            <div class="method-icon stripe-icon">
+                                <i class="bi bi-credit-card"></i>
+                            </div>
+                            <div class="method-info">
+                                <h3 class="method-title">Paiement par Carte Bancaire</h3>
+                                <p class="method-subtitle">Paiement sécurisé avec Stripe • {{ commande.total|floatformat:0 }} XOF</p>
+                            </div>
+                        </div>
+
+                        <div class="method-body">
+                            <form id="payment-form" action="{% url 'boutique:paiement_stripe' commande.numero %}" method="post">
+                                {% csrf_token %}
+
+                                <div class="form-grid">
+                                    <div class="form-group full-width">
+                                        <label class="form-label">
+                                            <i class="bi bi-credit-card me-2"></i>Numéro de carte
+                                        </label>
+                                        <div class="input-group modern-input-group">
+                                            <span class="input-group-text">
+                                                <i class="bi bi-credit-card"></i>
+                                            </span>
+                                            <input type="text" class="form-control modern-input" placeholder="4242 4242 4242 4242" readonly>
+                                        </div>
+                                        <small class="form-help">Numéro de test Stripe pour la démonstration</small>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="form-label">
+                                            <i class="bi bi-calendar me-2"></i>Date d'expiration
+                                        </label>
+                                        <div class="input-group modern-input-group">
+                                            <span class="input-group-text">
+                                                <i class="bi bi-calendar"></i>
+                                            </span>
+                                            <input type="text" class="form-control modern-input" placeholder="12/25" readonly>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="form-label">
+                                            <i class="bi bi-shield me-2"></i>Code CVC
+                                        </label>
+                                        <div class="input-group modern-input-group">
+                                            <span class="input-group-text">
+                                                <i class="bi bi-shield"></i>
+                                            </span>
+                                            <input type="text" class="form-control modern-input" placeholder="123" readonly>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group full-width">
+                                        <label class="form-label">
+                                            <i class="bi bi-person me-2"></i>Nom sur la carte
+                                        </label>
+                                        <div class="input-group modern-input-group">
+                                            <span class="input-group-text">
+                                                <i class="bi bi-person"></i>
+                                            </span>
+                                            <input type="text" class="form-control modern-input" value="{{ commande.nom_complet }}" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="payment-notice">
+                                    <div class="notice-icon">
+                                        <i class="bi bi-info-circle"></i>
+                                    </div>
+                                    <div class="notice-content">
+                                        <strong>Mode test :</strong> Utilisez le numéro 4242 4242 4242 4242 pour tester le paiement.
+                                        <br><small>Montant converti automatiquement pour le processeur de paiement.</small>
+                                    </div>
+                                </div>
+
+                                <div class="payment-actions">
+                                    <button type="submit" class="btn btn-stripe btn-lg">
+                                        <i class="bi bi-credit-card me-2"></i>
+                                        Payer {{ commande.total|floatformat:0 }} XOF avec Stripe
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                {% elif commande.methode_paiement == 'cinetpay' %}
+                    <!-- Paiement CinetPay -->
+                    <div class="payment-method-card cinetpay-card">
+                        <div class="method-header">
+                            <div class="method-icon cinetpay-icon">
+                                <i class="bi bi-phone"></i>
+                            </div>
+                            <div class="method-info">
+                                <h3 class="method-title">Paiement Mobile Money</h3>
+                                <p class="method-subtitle">Paiement sécurisé avec CinetPay • {{ commande.total|floatformat:0 }} XOF</p>
+                            </div>
+                        </div>
+
+                        <div class="method-body">
+                            <form id="cinetpay-form" action="{% url 'boutique:paiement_cinetpay' commande.numero %}" method="post">
+                                {% csrf_token %}
+
+                                <!-- Sélection de l'opérateur avec vrais logos -->
+                                <div class="operator-selection">
+                                    <label class="form-label">
+                                        <i class="bi bi-sim me-2"></i>Choisissez votre opérateur Mobile Money
+                                    </label>
+                                    <div class="operators-grid">
+                                        <div class="operator-option" data-operator="orange">
+                                            <input type="radio" name="operator" value="orange" id="orange" required>
+                                            <label for="orange" class="operator-card orange-card">
+                                                <div class="operator-logo">
+                                                    <img src="{% load static %}{% static 'images/orange-logo.png' %}" alt="Orange Money" class="logo-image">
+                                                </div>
+                                                <div class="operator-info">
+                                                    <h6 class="operator-name">Orange Money</h6>
+                                                    <p class="operator-desc">Paiement sécurisé et rapide</p>
+                                                </div>
+                                                <div class="selection-indicator">
+                                                    <i class="bi bi-check-circle"></i>
+                                                </div>
+                                            </label>
+                                        </div>
+
+                                        <div class="operator-option" data-operator="moov">
+                                            <input type="radio" name="operator" value="moov" id="moov" required>
+                                            <label for="moov" class="operator-card moov-card">
+                                                <div class="operator-logo">
+                                                    <img src="{% load static %}{% static 'images/logo-moov.png' %}" alt="Moov Money" class="logo-image">
+                                                </div>
+                                                <div class="operator-info">
+                                                    <h6 class="operator-name">Moov Money</h6>
+                                                    <p class="operator-desc">Paiement sécurisé et rapide</p>
+                                                </div>
+                                                <div class="selection-indicator">
+                                                    <i class="bi bi-check-circle"></i>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Numéro de téléphone -->
+                                <div class="phone-input-section">
+                                    <label class="form-label">
+                                        <i class="bi bi-phone me-2"></i>Numéro de téléphone Mobile Money
+                                    </label>
+                                    <div class="phone-input-container">
+                                        <div class="country-code">
+                                            <span class="flag">🇲🇱</span>
+                                            <span class="code">+223</span>
+                                        </div>
+                                        <input type="tel" name="phone_number" id="phone_number"
+                                               class="form-control phone-input"
+                                               placeholder="70123456"
+                                               required
+                                               pattern="[0-9]{8}"
+                                               maxlength="8"
+                                               title="Entrez un numéro de 8 chiffres">
+                                    </div>
+                                    <small class="form-help">
+                                        <i class="bi bi-info-circle me-1"></i>
+                                        Entrez votre numéro sans l'indicatif pays (+223). Exemple: 70123456
+                                    </small>
+                                </div>
+
+                                <div class="payment-notice warning-notice">
+                                    <div class="notice-icon">
+                                        <i class="bi bi-exclamation-triangle"></i>
+                                    </div>
+                                    <div class="notice-content">
+                                        <strong>Important :</strong> Assurez-vous que votre compte Mobile Money dispose
+                                        d'un solde suffisant ({{ commande.total|floatformat:0 }} XOF).
+                                    </div>
+                                </div>
+
+                                <div class="payment-actions">
+                                    <button type="submit" class="btn btn-mobile-money btn-lg" id="cinetpay-submit" disabled>
+                                        <i class="bi bi-phone me-2"></i>
+                                        Payer {{ commande.total|floatformat:0 }} XOF avec Mobile Money
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <!-- Navigation -->
+                <div class="payment-navigation">
+                    <a href="{% url 'boutique:detail_commande' commande.numero %}" class="btn btn-outline-secondary btn-lg">
+                        <i class="bi bi-arrow-left me-2"></i>Retour à la commande
+                    </a>
+                    <a href="{% url 'boutique:mes_commandes' %}" class="btn btn-outline-primary btn-lg">
+                        <i class="bi bi-list me-2"></i>Mes commandes
+                    </a>
+                </div>
+            </div>
+
+            <!-- Résumé de commande moderne -->
+            <div class="col-xl-4 col-lg-5">
+                <div class="order-summary-card">
+                    <div class="summary-header">
+                        <h5 class="summary-title">
+                            <i class="bi bi-receipt me-2"></i>Récapitulatif de commande
+                        </h5>
+                    </div>
+                    <div class="summary-body">
+                        <!-- Informations commande -->
+                        <div class="order-info-section">
+                            <div class="info-row">
+                                <span class="info-label">Commande :</span>
+                                <span class="info-value">{{ commande.numero }}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Date :</span>
+                                <span class="info-value">{{ commande.date_creation|date:"d/m/Y" }}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Statut :</span>
+                                <span class="status-badge status-pending">{{ commande.get_statut_display }}</span>
+                            </div>
+                        </div>
+
+                        <div class="divider"></div>
+
+                        <!-- Articles -->
+                        <div class="items-section">
+                            <h6 class="section-title">
+                                <i class="bi bi-box me-2"></i>Articles
+                            </h6>
+                            {% for item in commande.items.all %}
+                            <div class="order-item">
+                                {% if item.produit.image %}
+                                    <img src="{{ item.produit.image.url }}" alt="{{ item.nom_produit }}" class="item-image">
+                                {% else %}
+                                    <div class="item-image-placeholder">
+                                        <i class="bi bi-box"></i>
+                                    </div>
+                                {% endif %}
+                                <div class="item-details">
+                                    <div class="item-name">{{ item.nom_produit }}</div>
+                                    <div class="item-quantity">{{ item.quantite }} × {{ item.prix_unitaire|floatformat:0 }} XOF</div>
+                                </div>
+                                <div class="item-total">{{ item.total|floatformat:0 }} XOF</div>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="divider"></div>
+
+                        <!-- Total -->
+                        <div class="total-section">
+                            <div class="total-row">
+                                <span class="total-label">Total à payer</span>
+                                <span class="total-amount">{{ commande.total|floatformat:0 }} XOF</span>
+                            </div>
+                        </div>
+
+                        <!-- Sécurité -->
+                        <div class="security-badges">
+                            <div class="security-item">
+                                <i class="bi bi-shield-check"></i>
+                                <span>Sécurisé</span>
+                            </div>
+                            <div class="security-item">
+                                <i class="bi bi-lock"></i>
+                                <span>Crypté SSL</span>
+                            </div>
+                            <div class="security-item">
+                                <i class="bi bi-award"></i>
+                                <span>Garantie</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Variables modernes */
+:root {
+    --primary-color: #667eea;
+    --success-color: #28a745;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --info-color: #17a2b8;
+    --orange-color: #ff6600;
+    --moov-color: #ff8c00;
+    --stripe-color: #635bff;
+    --dark-color: #2d3748;
+    --light-color: #f7fafc;
+    --border-color: #e2e8f0;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+    --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+    --border-radius: 12px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Page générale */
+.modern-payment-page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+}
+
+/* En-tête */
+.payment-header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #764ba2 100%);
+    color: white;
+    padding: 3rem 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.payment-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    opacity: 0.3;
+}
+
+.payment-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 2;
+}
+
+.payment-info {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    position: relative;
+    z-index: 2;
+}
+
+.order-number {
+    background: rgba(255,255,255,0.2);
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    font-weight: 600;
+}
+
+.separator {
+    margin: 0 1rem;
+}
+
+.order-amount {
+    font-weight: 700;
+    font-size: 1.3rem;
+}
+
+/* Cartes de méthode de paiement */
+.payment-method-card {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    margin-bottom: 2rem;
+    border: 2px solid transparent;
+    transition: var(--transition);
+}
+
+.stripe-card {
+    border-color: var(--stripe-color);
+}
+
+.cinetpay-card {
+    border-color: var(--success-color);
+}
+
+.method-header {
+    background: linear-gradient(135deg, #f8fafc, #edf2f7);
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.method-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1.5rem;
+    font-size: 1.5rem;
+    color: white;
+}
+
+.stripe-icon {
+    background: linear-gradient(135deg, var(--stripe-color), #4f46e5);
+}
+
+.cinetpay-icon {
+    background: linear-gradient(135deg, var(--success-color), #059669);
+}
+
+.method-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--dark-color);
+    margin-bottom: 0.5rem;
+}
+
+.method-subtitle {
+    color: #6b7280;
+    margin-bottom: 0;
+    font-size: 1rem;
+}
+
+.method-body {
+    padding: 2rem;
+}
+
+/* Grille de formulaire */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--dark-color);
+    margin-bottom: 0.75rem;
+    display: block;
+    font-size: 0.95rem;
+}
+
+.modern-input-group {
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: var(--transition);
+    background: white;
+}
+
+.modern-input-group:focus-within {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.modern-input-group .input-group-text {
+    background: #f8fafc;
+    border: none;
+    color: #6b7280;
+    padding: 1rem;
+}
+
+.modern-input {
+    border: none;
+    padding: 1rem;
+    font-size: 1rem;
+    background: transparent;
+}
+
+.modern-input:focus {
+    box-shadow: none;
+    border: none;
+    outline: none;
+}
+
+.form-help {
+    color: #6b7280;
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+    display: block;
+}
+
+/* Sélection d'opérateur */
+.operator-selection {
+    margin-bottom: 2rem;
+}
+
+.operators-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.operator-option {
+    position: relative;
+}
+
+.operator-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.operator-card {
+    display: flex;
+    align-items: center;
+    padding: 1.5rem;
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius);
+    background: white;
+    cursor: pointer;
+    transition: var(--transition);
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+    overflow: hidden;
+}
+
+.operator-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    text-decoration: none;
+    color: inherit;
+}
+
+.operator-option input:checked + .operator-card {
+    border-color: var(--primary-color);
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(102, 126, 234, 0.05));
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.orange-card.operator-card:hover,
+.operator-option input:checked + .orange-card {
+    border-color: var(--orange-color);
+    background: linear-gradient(135deg, rgba(255, 102, 0, 0.1), rgba(255, 102, 0, 0.05));
+}
+
+.moov-card.operator-card:hover,
+.operator-option input:checked + .moov-card {
+    border-color: var(--moov-color);
+    background: linear-gradient(135deg, rgba(255, 140, 0, 0.1), rgba(255, 140, 0, 0.05));
+}
+
+.operator-logo {
+    width: 50px;
+    height: 50px;
+    margin-right: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #f8fafc;
+}
+
+.logo-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 5px;
+}
+
+.operator-info {
+    flex-grow: 1;
+}
+
+.operator-name {
+    font-weight: 700;
+    color: var(--dark-color);
+    margin-bottom: 0.25rem;
+    font-size: 1rem;
+}
+
+.operator-desc {
+    color: #6b7280;
+    margin-bottom: 0;
+    font-size: 0.85rem;
+}
+
+.selection-indicator {
+    color: var(--primary-color);
+    font-size: 1.25rem;
+    opacity: 0;
+    transition: var(--transition);
+}
+
+.operator-option input:checked + .operator-card .selection-indicator {
+    opacity: 1;
+}
+
+/* Saisie de numéro de téléphone */
+.phone-input-section {
+    margin-bottom: 2rem;
+}
+
+.phone-input-container {
+    display: flex;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: var(--transition);
+    background: white;
+}
+
+.phone-input-container:focus-within {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.country-code {
+    background: #f8fafc;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-right: 1px solid var(--border-color);
+    font-weight: 600;
+    color: var(--dark-color);
+}
+
+.flag {
+    font-size: 1.2rem;
+}
+
+.phone-input {
+    border: none;
+    padding: 1rem;
+    font-size: 1rem;
+    flex-grow: 1;
+    background: transparent;
+    font-family: monospace;
+    letter-spacing: 1px;
+}
+
+.phone-input:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+/* Notices */
+.payment-notice {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.05));
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: flex-start;
+}
+
+.warning-notice {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(245, 158, 11, 0.05));
+    border-color: rgba(245, 158, 11, 0.2);
+}
+
+.notice-icon {
+    color: #3b82f6;
+    font-size: 1.25rem;
+    margin-right: 1rem;
+    flex-shrink: 0;
+    margin-top: 0.125rem;
+}
+
+.warning-notice .notice-icon {
+    color: #f59e0b;
+}
+
+.notice-content {
+    color: var(--dark-color);
+    line-height: 1.5;
+}
+
+/* Boutons de paiement */
+.payment-actions {
+    margin-top: 2rem;
+}
+
+.btn-stripe {
+    background: linear-gradient(135deg, var(--stripe-color), #4f46e5);
+    border: none;
+    color: white;
+    border-radius: 8px;
+    padding: 1rem 2rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+    width: 100%;
+    transition: var(--transition);
+}
+
+.btn-stripe:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    color: white;
+}
+
+.btn-mobile-money {
+    background: linear-gradient(135deg, var(--success-color), #059669);
+    border: none;
+    color: white;
+    border-radius: 8px;
+    padding: 1rem 2rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+    width: 100%;
+    transition: var(--transition);
+}
+
+.btn-mobile-money:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    color: white;
+}
+
+.btn-mobile-money:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Navigation */
+.payment-navigation {
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+    margin-top: 2rem;
+}
+
+/* Résumé de commande */
+.order-summary-card {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    position: sticky;
+    top: 2rem;
+}
+
+.summary-header {
+    background: linear-gradient(135deg, #f8fafc, #edf2f7);
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.summary-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--dark-color);
+    margin-bottom: 0;
+}
+
+.summary-body {
+    padding: 2rem;
+}
+
+.order-info-section {
+    margin-bottom: 1.5rem;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.info-row:last-child {
+    margin-bottom: 0;
+}
+
+.info-label {
+    color: #6b7280;
+    font-size: 0.9rem;
+}
+
+.info-value {
+    font-weight: 600;
+    color: var(--dark-color);
+}
+
+.status-badge {
+    background: rgba(245, 158, 11, 0.2);
+    color: #92400e;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.divider {
+    height: 1px;
+    background: var(--border-color);
+    margin: 1.5rem 0;
+}
+
+.section-title {
+    font-weight: 600;
+    color: var(--dark-color);
+    margin-bottom: 1rem;
+    font-size: 1rem;
+}
+
+.order-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    background: #f8fafc;
+    border-radius: 8px;
+}
+
+.order-item:last-child {
+    margin-bottom: 0;
+}
+
+.item-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    object-fit: cover;
+    margin-right: 1rem;
+}
+
+.item-image-placeholder {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    background: #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    color: #6b7280;
+}
+
+.item-details {
+    flex-grow: 1;
+}
+
+.item-name {
+    font-weight: 600;
+    color: var(--dark-color);
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+}
+
+.item-quantity {
+    color: #6b7280;
+    font-size: 0.8rem;
+}
+
+.item-total {
+    font-weight: 700;
+    color: var(--success-color);
+    font-size: 0.9rem;
+}
+
+.total-section {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(102, 126, 234, 0.05));
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+}
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.total-label {
+    font-weight: 600;
+    color: var(--dark-color);
+    font-size: 1.1rem;
+}
+
+.total-amount {
+    font-weight: 700;
+    color: var(--primary-color);
+    font-size: 1.5rem;
+}
+
+.security-badges {
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
+}
+
+.security-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #6b7280;
+    font-size: 0.8rem;
+}
+
+.security-item i {
+    font-size: 1.25rem;
+    margin-bottom: 0.25rem;
+    color: var(--success-color);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .payment-title {
+        font-size: 2rem;
+    }
+
+    .operators-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .payment-navigation {
+        flex-direction: column;
+    }
+
+    .method-header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .method-icon {
+        margin-right: 0;
+        margin-bottom: 1rem;
+    }
+
+    .operator-card {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .operator-logo {
+        margin-right: 0;
+        margin-bottom: 1rem;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Gestion de la sélection d'opérateur
+    const operatorOptions = document.querySelectorAll('.operator-option input[type="radio"]');
+    const submitButton = document.getElementById('cinetpay-submit');
+    const phoneInput = document.getElementById('phone_number');
+
+    operatorOptions.forEach(option => {
+        option.addEventListener('change', function() {
+            checkFormValidity();
+        });
+    });
+
+    // Validation et formatage du numéro de téléphone malien
+    if (phoneInput) {
+        phoneInput.addEventListener('input', function() {
+            // Supprimer tous les caractères non numériques
+            let value = this.value.replace(/\D/g, '');
+
+            // Limiter à 8 chiffres
+            if (value.length > 8) {
+                value = value.substring(0, 8);
+            }
+
+            this.value = value;
+            checkFormValidity();
+        });
+
+        phoneInput.addEventListener('keypress', function(e) {
+            // Permettre seulement les chiffres et touches de contrôle
+            if (!/[0-9]/.test(e.key) && !['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                e.preventDefault();
+            }
+        });
+    }
+
+    function checkFormValidity() {
+        if (submitButton && phoneInput) {
+            const hasOperator = document.querySelector('input[name="operator"]:checked');
+            const phoneValue = phoneInput.value.replace(/\s/g, '');
+            const hasValidPhone = phoneValue.length === 8 && /^[0-9]{8}$/.test(phoneValue);
+
+            submitButton.disabled = !(hasOperator && hasValidPhone);
+        }
+    }
+
+    // Validation du formulaire avant soumission
+    const cinetpayForm = document.getElementById('cinetpay-form');
+    if (cinetpayForm) {
+        cinetpayForm.addEventListener('submit', function(e) {
+            const selectedOperator = document.querySelector('input[name="operator"]:checked');
+            const phoneValue = phoneInput.value.replace(/\s/g, '');
+
+            if (!selectedOperator) {
+                e.preventDefault();
+                alert('Veuillez sélectionner un opérateur Mobile Money.');
+                return false;
+            }
+
+            if (phoneValue.length !== 8 || !/^[0-9]{8}$/.test(phoneValue)) {
+                e.preventDefault();
+                alert('Veuillez entrer un numéro de téléphone valide (8 chiffres).');
+                phoneInput.focus();
+                return false;
+            }
+        });
+    }
+
+    // Animation d'entrée
+    const cards = document.querySelectorAll('.payment-method-card, .order-summary-card');
+    cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(30px)';
+
+        setTimeout(() => {
+            card.style.transition = 'all 0.6s ease-out';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, index * 200);
+    });
+});
+</script>
+{% endblock %}

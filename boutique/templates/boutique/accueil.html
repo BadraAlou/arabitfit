@@ -1,0 +1,691 @@
+{% extends 'base.html' %}
+
+{% block titre %}Accueil - Biodetox Mali{% endblock %}
+
+{% block contenu %}
+<!-- Section Hero -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 animate-on-scroll">
+                <h1 class="display-4 fw-bold mb-4" style="color: var(--couleur-marron); text-shadow: 2px 2px 4px rgba(0,0,0,0.1);">
+                    Le goût du bien être
+                </h1>
+                <p class="lead mb-4" style="font-size: 1.2em; color: var(--couleur-marron);">
+                    Découvrez nos produits détox <strong style="color: var(--couleur-vert-fonce);">Arabigum</strong> 100% naturels pour une purification en douceur et une silhouette harmonieuse.
+                </p>
+                <div class="d-flex gap-3 flex-wrap">
+                    <a href="{% url 'boutique:liste_produits' %}" class="btn btn-primary-custom btn-lg">
+                        <i class="bi bi-shop me-2"></i>Découvrir nos produits
+                    </a>
+                    {% if not user.is_authenticated %}
+                        <a href="{% url 'boutique:inscription' %}" class="btn btn-secondary-custom btn-lg">
+                            <i class="bi bi-person-plus me-2"></i>Créer un compte
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-lg-6 text-center animate-on-scroll">
+                <div class="position-relative hero-logo-container">
+                    {% load static %}
+                    <!-- Logos avec alternance CSS pure et fallback -->
+                    <div class="logo-display-container">
+                        <!-- Logo Arabigum -->
+                        <div class="logo-wrapper logo-arabigum-wrapper">
+                            <div class="logo-content">
+                                <div class="logo-text-fallback arabigum-fallback">
+                                    <h2>ARABIGUM</h2>
+                                    <p>Le goût du bien être</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Logo Biodetox Mali -->
+                        <div class="logo-wrapper logo-biodetox-wrapper">
+                            <div class="logo-content">
+                                <div class="logo-text-fallback biodetox-fallback">
+                                    <h2>BIODETOX MALI</h2>
+                                    <p>Produits naturels</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cercles décoratifs animés -->
+                    <div class="floating-circle circle-1"></div>
+                    <div class="floating-circle circle-2"></div>
+                    <div class="floating-circle circle-3"></div>
+                    <div class="floating-circle circle-4"></div>
+                    <div class="floating-circle circle-5"></div>
+
+                    <!-- Badge "100% Naturel" modernisé -->
+                    <div class="modern-badge">
+                        100% Naturel
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Section Catégories -->
+<section class="py-5 bg-accent">
+    <div class="container">
+        <div class="row text-center mb-5 animate-on-scroll">
+            <div class="col-12">
+                <h2 class="display-6 fw-bold mb-3" style="color: var(--couleur-marron);">
+                    Nos Catégories de Produits
+                </h2>
+                <p class="lead" style="color: var(--couleur-marron); opacity: 0.8;">Choisissez la solution détox qui vous correspond</p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            {% for categorie in categories %}
+            <div class="col-md-4 animate-on-scroll">
+                <div class="card card-custom h-100 text-center position-relative overflow-hidden">
+                    {% if categorie.image %}
+                        <img src="{{ categorie.image.url }}" class="card-img-top" alt="{{ categorie.nom }}" style="height: 220px; object-fit: cover;">
+                    {% else %}
+                        <div class="card-img-top d-flex align-items-center justify-content-center position-relative" style="height: 220px; background: var(--couleur-gradient-vert);">
+                            <i class="bi bi-box-seam text-white" style="font-size: 4rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);"></i>
+                            <div class="position-absolute top-0 start-0 w-100 h-100" style="background: rgba(152, 251, 152, 0.2);"></div>
+                        </div>
+                    {% endif %}
+                    <div class="card-body d-flex flex-column p-4">
+                        <h5 class="card-title fw-bold mb-3" style="color: var(--couleur-marron);">
+                            <i class="bi bi-star-fill me-2" style="color: var(--couleur-vert-fonce);"></i>{{ categorie.nom }}
+                        </h5>
+                        <p class="card-text flex-grow-1 mb-4" style="color: var(--couleur-marron); opacity: 0.8;">
+                            {{ categorie.description|default:"Découvrez notre gamme de produits détox exceptionnels." }}
+                        </p>
+                        <a href="{% url 'boutique:produits_par_categorie' categorie.pk %}" class="btn btn-primary-custom">
+                            <i class="bi bi-arrow-right me-2"></i>Voir les produits
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center animate-on-scroll">
+                <div class="card card-custom p-5">
+                    <i class="bi bi-box-seam" style="font-size: 4rem; color: var(--couleur-vert-fonce); opacity: 0.5;"></i>
+                    <p class="mt-3 mb-0" style="color: var(--couleur-marron);">Aucune catégorie disponible pour le moment.</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Section Produits Populaires -->
+{% if produits_populaires %}
+<section class="py-5" style="background: rgba(255, 248, 220, 0.3); backdrop-filter: blur(15px);">
+    <div class="container">
+        <div class="row text-center mb-5 animate-on-scroll">
+            <div class="col-12">
+                <h2 class="display-6 fw-bold mb-3" style="color: var(--couleur-marron);">
+                    Nos Produits Populaires
+                </h2>
+                <p class="lead" style="color: var(--couleur-marron); opacity: 0.8;">Les favoris de nos clients</p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            {% for produit in produits_populaires %}
+            <div class="col-lg-4 col-md-6 animate-on-scroll">
+                <a href="{% url 'boutique:detail_produit' produit.pk %}" class="text-decoration-none">
+                    <div class="card card-custom h-100 position-relative overflow-hidden product-card-clickable">
+                        <div class="position-relative">
+                            <img src="{{ produit.image.url }}" class="card-img-top" alt="{{ produit.nom }}" style="height: 280px; object-fit: cover;">
+                            <div class="position-absolute top-0 end-0 m-3">
+                                {% if produit.est_en_stock %}
+                                    <span class="stock-badge">En stock</span>
+                                {% else %}
+                                    <span class="stock-badge rupture-stock">Rupture de stock</span>
+                                {% endif %}
+                            </div>
+                            <div class="position-absolute bottom-0 start-0 end-0 p-3" style="background: linear-gradient(transparent, rgba(0,0,0,0.7));">
+                                <span class="badge bg-light text-dark px-3 py-2">{{ produit.categorie.nom }}</span>
+                            </div>
+                            <!-- Overlay de clic -->
+                            <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center opacity-0 hover-overlay"
+                                 style="background: rgba(152, 251, 152, 0.8); transition: opacity 0.3s ease;">
+                                <div class="text-center text-white">
+                                    <i class="bi bi-eye" style="font-size: 2rem;"></i>
+                                    <p class="mt-2 mb-0 fw-bold">Voir les détails</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body d-flex flex-column p-4">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <h5 class="card-title fw-bold mb-0 flex-grow-1" style="color: var(--couleur-marron);">{{ produit.nom }}</h5>
+                                <span class="prix-produit ms-2">{{ produit.prix|floatformat:0 }} XOF</span>
+                            </div>
+                            <p class="card-text flex-grow-1 mb-4" style="color: var(--couleur-marron); opacity: 0.8;">{{ produit.description|truncatewords:15 }}</p>
+
+                            <!-- Note du produit si disponible -->
+                            {% if produit.nombre_avis > 0 %}
+                            <div class="mb-3">
+                                <div class="d-flex align-items-center">
+                                    {% for i in "12345" %}
+                                        {% if forloop.counter <= produit.note_moyenne %}
+                                            <i class="bi bi-star-fill" style="color: #ffc107; font-size: 0.9rem;"></i>
+                                        {% else %}
+                                            <i class="bi bi-star" style="color: #ffc107; font-size: 0.9rem;"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                    <span class="ms-2 text-muted small">{{ produit.note_moyenne|floatformat:1 }} ({{ produit.nombre_avis }})</span>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            <!-- Message d'incitation au clic -->
+                            <div class="mt-auto text-center">
+                                <small class="text-muted">
+                                    <i class="bi bi-cursor-fill me-1"></i>
+                                    Cliquez pour voir les détails et commander
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="text-center mt-5 animate-on-scroll">
+            <a href="{% url 'boutique:liste_produits' %}" class="btn btn-secondary-custom btn-lg">
+                <i class="bi bi-grid me-2"></i>Voir tous les produits
+            </a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Section Témoignages Clients -->
+{% if avis_clients %}
+<section class="py-5 bg-accent">
+    <div class="container">
+        <div class="row text-center mb-5 animate-on-scroll">
+            <div class="col-12">
+                <h2 class="display-6 fw-bold mb-3" style="color: var(--couleur-marron);">
+                    <i class="bi bi-chat-quote me-2" style="color: var(--couleur-vert-fonce);"></i>Ce que disent nos clients
+                </h2>
+                <p class="lead" style="color: var(--couleur-marron); opacity: 0.8;">Témoignages authentiques de nos clients satisfaits</p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            {% for avis in avis_clients %}
+            <div class="col-lg-4 col-md-6 animate-on-scroll">
+                <div class="card card-custom h-100">
+                    <div class="card-body p-4 text-center">
+                        <div class="mb-3">
+                            <div class="rounded-circle d-inline-flex align-items-center justify-content-center"
+                                 style="width: 60px; height: 60px; background: var(--couleur-gradient-vert);">
+                                <i class="bi bi-person-fill" style="font-size: 1.5rem; color: var(--couleur-marron);"></i>
+                            </div>
+                        </div>
+
+                        <!-- Note en étoiles -->
+                        <div class="mb-3">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= avis.note %}
+                                    <i class="bi bi-star-fill" style="color: #ffc107;"></i>
+                                {% else %}
+                                    <i class="bi bi-star" style="color: #ffc107;"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+
+                        <p class="mb-3 fst-italic" style="color: var(--couleur-marron);">
+                            "{{ avis.commentaire|truncatewords:20 }}"
+                        </p>
+
+                        <h6 class="fw-bold mb-1" style="color: var(--couleur-vert-fonce);">
+                            {{ avis.utilisateur.first_name|default:avis.utilisateur.username }}
+                        </h6>
+                        <small class="text-muted">{{ avis.produit.nom }}</small>
+                        <br>
+                        <small class="text-muted">{{ avis.date_creation|date:"d M Y" }}</small>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="text-center mt-5 animate-on-scroll">
+            <a href="{% url 'boutique:liste_produits' %}" class="btn btn-primary-custom">
+                <i class="bi bi-eye me-2"></i>Voir tous les produits avec avis
+            </a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Section Avantages -->
+<section class="py-5" style="background: rgba(255, 248, 220, 0.3); backdrop-filter: blur(15px);">
+    <div class="container">
+        <div class="row text-center mb-5 animate-on-scroll">
+            <div class="col-12">
+                <h2 class="display-6 fw-bold mb-3" style="color: var(--couleur-marron);">
+                    Pourquoi choisir Biodetox Mali ?
+                </h2>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4 text-center animate-on-scroll">
+                <div class="card card-custom p-4 h-100">
+                    <div class="mb-4">
+                        <div class="rounded-circle d-inline-flex align-items-center justify-content-center"
+                             style="width: 80px; height: 80px; background: var(--couleur-gradient-vert);">
+                            <i class="bi bi-leaf" style="font-size: 2.5rem; color: var(--couleur-marron);"></i>
+                        </div>
+                    </div>
+                    <h5 class="fw-bold mb-3" style="color: var(--couleur-marron);">100% Naturel</h5>
+                    <p style="color: var(--couleur-marron); opacity: 0.8;">Nos produits Arabigum sont entièrement naturels, sans additifs chimiques nocifs.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4 text-center animate-on-scroll">
+                <div class="card card-custom p-4 h-100">
+                    <div class="mb-4">
+                        <div class="rounded-circle d-inline-flex align-items-center justify-content-center"
+                             style="width: 80px; height: 80px; background: var(--couleur-gradient-principal);">
+                            <i class="bi bi-truck" style="font-size: 2.5rem; color: white;"></i>
+                        </div>
+                    </div>
+                    <h5 class="fw-bold mb-3" style="color: var(--couleur-marron);">Livraison Rapide</h5>
+                    <p style="color: var(--couleur-marron); opacity: 0.8;">Recevez vos produits rapidement avec notre service de livraison ultra-efficace.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4 text-center animate-on-scroll">
+                <div class="card card-custom p-4 h-100">
+                    <div class="mb-4">
+                        <div class="rounded-circle d-inline-flex align-items-center justify-content-center"
+                             style="width: 80px; height: 80px; background: var(--couleur-gradient-vert);">
+                            <i class="bi bi-shield-check" style="font-size: 2.5rem; color: var(--couleur-marron);"></i>
+                        </div>
+                    </div>
+                    <h5 class="fw-bold mb-3" style="color: var(--couleur-marron);">Qualité Garantie</h5>
+                    <p style="color: var(--couleur-marron); opacity: 0.8;">Tous nos produits sont testés et approuvés pour votre sécurité et efficacité.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+/* Nouveau système d'affichage des logos avec fallback texte */
+.hero-logo-container {
+    position: relative;
+    display: inline-block;
+    padding: 60px;
+}
+
+.logo-display-container {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    height: 400px;
+    margin: 0 auto;
+}
+
+.logo-wrapper {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(139, 69, 19, 0.2);
+    transition: all 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(10px);
+    border: 3px solid rgba(255, 255, 255, 0.3);
+}
+
+.logo-arabigum-wrapper {
+    background: linear-gradient(135deg,
+        rgba(152, 251, 152, 0.9),
+        rgba(144, 238, 144, 0.8),
+        rgba(255, 248, 220, 0.7));
+    opacity: 1;
+    z-index: 10;
+    animation: logoShowArabigum 8s infinite ease-in-out;
+}
+
+.logo-biodetox-wrapper {
+    background: linear-gradient(135deg,
+        rgba(139, 69, 19, 0.9),
+        rgba(210, 180, 140, 0.8),
+        rgba(255, 248, 220, 0.7));
+    opacity: 0;
+    z-index: 5;
+    animation: logoShowBiodetox 8s infinite ease-in-out;
+}
+
+.logo-content {
+    text-align: center;
+    padding: 40px;
+}
+
+.logo-text-fallback {
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.arabigum-fallback h2 {
+    font-size: 3rem;
+    font-weight: 900;
+    margin-bottom: 15px;
+    color: var(--couleur-marron);
+    text-shadow: 2px 2px 4px rgba(255,255,255,0.5);
+}
+
+.arabigum-fallback p {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--couleur-vert-fonce);
+    margin: 0;
+}
+
+.biodetox-fallback h2 {
+    font-size: 2.8rem;
+    font-weight: 900;
+    margin-bottom: 15px;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.biodetox-fallback p {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: rgba(255, 248, 220, 0.9);
+    margin: 0;
+}
+
+/* Animations CSS pour l'alternance */
+@keyframes logoShowArabigum {
+    0%, 40% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1) rotateY(0deg);
+        z-index: 10;
+    }
+    45%, 95% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8) rotateY(90deg);
+        z-index: 5;
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1) rotateY(0deg);
+        z-index: 10;
+    }
+}
+
+@keyframes logoShowBiodetox {
+    0%, 45% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8) rotateY(-90deg);
+        z-index: 5;
+    }
+    50%, 90% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1) rotateY(0deg);
+        z-index: 10;
+    }
+    95%, 100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8) rotateY(-90deg);
+        z-index: 5;
+    }
+}
+
+/* Pause au hover */
+.hero-logo-container:hover .logo-wrapper {
+    animation-play-state: paused;
+}
+
+.logo-wrapper:hover {
+    transform: translate(-50%, -50%) scale(1.05) !important;
+    box-shadow: 0 20px 45px rgba(139, 69, 19, 0.4) !important;
+}
+
+/* Cercles décoratifs modernes */
+.floating-circle {
+    position: absolute;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(152, 251, 152, 0.3), rgba(144, 238, 144, 0.2));
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    animation: modernOrbit 12s linear infinite;
+}
+
+.circle-1 {
+    width: 80px;
+    height: 80px;
+    top: 10%;
+    left: 5%;
+    animation-delay: 0s;
+    background: linear-gradient(135deg, rgba(152, 251, 152, 0.4), rgba(144, 238, 144, 0.2));
+}
+
+.circle-2 {
+    width: 60px;
+    height: 60px;
+    top: 15%;
+    right: 10%;
+    animation-delay: -3s;
+    background: linear-gradient(135deg, rgba(139, 69, 19, 0.4), rgba(210, 180, 140, 0.2));
+}
+
+.circle-3 {
+    width: 100px;
+    height: 100px;
+    bottom: 20%;
+    left: 0%;
+    animation-delay: -6s;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.3), rgba(255, 228, 181, 0.2));
+}
+
+.circle-4 {
+    width: 70px;
+    height: 70px;
+    bottom: 10%;
+    right: 5%;
+    animation-delay: -9s;
+    background: linear-gradient(135deg, rgba(135, 206, 235, 0.4), rgba(173, 216, 230, 0.2));
+}
+
+.circle-5 {
+    width: 50px;
+    height: 50px;
+    top: 50%;
+    left: -5%;
+    animation-delay: -1.5s;
+    background: linear-gradient(135deg, rgba(152, 251, 152, 0.4), rgba(144, 238, 144, 0.2));
+}
+
+@keyframes modernOrbit {
+    0% {
+        transform: rotate(0deg) translateX(30px) rotate(0deg);
+        opacity: 0.3;
+    }
+    50% {
+        opacity: 0.8;
+    }
+    100% {
+        transform: rotate(360deg) translateX(30px) rotate(-360deg);
+        opacity: 0.3;
+    }
+}
+
+/* Badge moderne "100% Naturel" */
+.modern-badge {
+    position: absolute;
+    top: -15px;
+    right: -15px;
+    background: var(--couleur-gradient-vert);
+    color: var(--couleur-marron);
+    padding: 15px 25px;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    border: 3px solid rgba(255, 255, 255, 0.9);
+    box-shadow: 0 10px 30px rgba(152, 251, 152, 0.3);
+    animation: modernPulse 4s ease-in-out infinite;
+    z-index: 15;
+    backdrop-filter: blur(10px);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+@keyframes modernPulse {
+    0%, 100% {
+        transform: scale(1) rotate(0deg);
+        box-shadow: 0 10px 30px rgba(152, 251, 152, 0.3);
+    }
+    50% {
+        transform: scale(1.05) rotate(1deg);
+        box-shadow: 0 15px 40px rgba(152, 251, 152, 0.5);
+    }
+}
+
+/* Hover overlay pour les produits */
+.hover-overlay {
+    transition: opacity 0.3s ease;
+}
+
+.product-card-clickable:hover .hover-overlay {
+    opacity: 1 !important;
+}
+
+.product-card-clickable {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.product-card-clickable:hover {
+    transform: translateY(-5px);
+}
+
+/* Responsive design optimisé */
+@media (max-width: 768px) {
+    .logo-display-container {
+        height: 300px;
+        max-width: 350px;
+    }
+
+    .hero-logo-container {
+        padding: 40px 20px;
+    }
+
+    .arabigum-fallback h2 {
+        font-size: 2.2rem;
+    }
+
+    .biodetox-fallback h2 {
+        font-size: 2rem;
+    }
+
+    .arabigum-fallback p,
+    .biodetox-fallback p {
+        font-size: 1rem;
+    }
+
+    .floating-circle {
+        opacity: 0.6;
+    }
+
+    .circle-1, .circle-3 {
+        width: 60px;
+        height: 60px;
+    }
+
+    .circle-2, .circle-4 {
+        width: 45px;
+        height: 45px;
+    }
+
+    .circle-5 {
+        width: 35px;
+        height: 35px;
+    }
+
+    .modern-badge {
+        font-size: 0.8rem;
+        padding: 12px 20px;
+        top: -10px;
+        right: -10px;
+    }
+}
+
+@media (max-width: 576px) {
+    .logo-display-container {
+        height: 250px;
+        max-width: 280px;
+    }
+
+    .hero-logo-container {
+        padding: 30px 15px;
+    }
+
+    .floating-circle {
+        opacity: 0.4;
+    }
+
+    .circle-3, .circle-5 {
+        display: none;
+    }
+}
+
+/* Pause animations si préférence utilisateur */
+@media (prefers-reduced-motion: reduce) {
+    .logo-wrapper,
+    .floating-circle,
+    .modern-badge {
+        animation: none !important;
+    }
+
+    .logo-arabigum-wrapper {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    .logo-biodetox-wrapper {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animation d'entrée des éléments
+    const animatedElements = document.querySelectorAll('.animate-on-scroll');
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    });
+
+    animatedElements.forEach(element => {
+        observer.observe(element);
+    });
+
+    console.log('✅ Page d\'accueil initialisée avec alternance CSS pure des logos');
+});
+</script>
+{% endblock %}

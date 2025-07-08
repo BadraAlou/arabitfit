@@ -1,0 +1,198 @@
+{% extends 'base.html' %}
+
+{% block titre %}À propos - Biodetox Mali{% endblock %}
+
+{% block contenu %}
+<div class="container my-5">
+    <!-- En-tête avec fond naturel -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card card-custom text-center p-5 bg-accent">
+                <h1 class="display-5 fw-bold mb-4" style="color: var(--couleur-marron);">
+                    <i class="bi bi-heart me-3" style="color: var(--couleur-vert-fonce);"></i>À propos de Biodetox Mali
+                </h1>
+                <p class="lead" style="color: var(--couleur-marron);">Le goût du bien être, naturellement</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notre histoire -->
+    <div class="row mb-5 align-items-center">
+        <div class="col-lg-6 animate-on-scroll">
+            <div class="card card-custom h-100">
+                <div class="card-body p-5">
+                    <h2 class="fw-bold mb-4" style="color: var(--couleur-marron);">
+                        <i class="bi bi-book me-2" style="color: var(--couleur-vert-fonce);"></i>Notre Histoire
+                    </h2>
+                    <p class="mb-4" style="color: var(--couleur-marron); line-height: 1.8;">
+                        Biodetox Mali est née d'une passion pour le bien-être naturel et la beauté authentique.
+                        Fondée au Mali, notre entreprise s'est donnée pour mission de révolutionner
+                        l'approche de la détox en proposant des solutions 100% naturelles.
+                    </p>
+                    <p class="mb-4" style="color: var(--couleur-marron); line-height: 1.8;">
+                        Nos produits Arabigum sont le fruit de recherches approfondies sur les
+                        bienfaits des plantes locales et des traditions ancestrales africaines.
+                        Nous croyons fermement que la nature offre les meilleures solutions
+                        pour prendre soin de son corps.
+                    </p>
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center me-3"
+                             style="width: 60px; height: 60px; background: var(--couleur-gradient-vert);">
+                            <i class="bi bi-leaf text-white" style="font-size: 1.5rem;"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-1">100% Naturel</h6>
+                            <small class="text-muted">Aucun additif chimique</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 animate-on-scroll">
+            <div class="position-relative">
+                {% load static %}
+                <img src="{% static 'images/biodetox-mali-logo.png' %}"
+                     alt="Biodetox Mali Logo"
+                     class="img-fluid rounded-4"
+                     style="max-height: 400px; width: 100%; object-fit: contain; filter: drop-shadow(0 10px 30px rgba(139, 69, 19, 0.2));">
+            </div>
+        </div>
+    </div>
+
+    <!-- Nos valeurs -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="text-center fw-bold mb-5" style="color: var(--couleur-marron);">
+                <i class="bi bi-star me-2" style="color: var(--couleur-vert-fonce);"></i>Nos Valeurs
+            </h2>
+        </div>
+
+        <div class="col-lg-4 col-md-6 mb-4 animate-on-scroll">
+            <div class="card card-custom h-100 text-center">
+                <div class="card-body p-4">
+                    <div class="mb-4">
+                        <div class="rounded-circle d-inline-flex align-items-center justify-content-center"
+                             style="width: 80px; height: 80px; background: var(--couleur-gradient-vert);">
+                            <i class="bi bi-shield-check" style="font-size: 2rem; color: var(--couleur-marron);"></i>
+                        </div>
+                    </div>
+                    <h5 class="fw-bold mb-3" style="color: var(--couleur-marron);">Qualité</h5>
+                    <p style="color: var(--couleur-marron); opacity: 0.8;">
+                        Nous sélectionnons rigoureusement nos ingrédients pour garantir
+                        la plus haute qualité dans chacun de nos produits.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 mb-4 animate-on-scroll">
+            <div class="card card-custom h-100 text-center">
+                <div class="card-body p-4">
+                    <div class="mb-4">
+                        <div class="rounded-circle d-inline-flex align-items-center justify-content-center"
+                             style="width: 80px; height: 80px; background: var(--couleur-gradient-principal);">
+                            <i class="bi bi-heart" style="font-size: 2rem; color: white;"></i>
+                        </div>
+                    </div>
+                    <h5 class="fw-bold mb-3" style="color: var(--couleur-marron);">Bien-être</h5>
+                    <p style="color: var(--couleur-marron); opacity: 0.8;">
+                        Votre santé et votre bien-être sont au cœur de notre démarche.
+                        Nous privilégions des solutions douces et respectueuses.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 mb-4 animate-on-scroll">
+            <div class="card card-custom h-100 text-center">
+                <div class="card-body p-4">
+                    <div class="mb-4">
+                        <div class="rounded-circle d-inline-flex align-items-center justify-content-center"
+                             style="width: 80px; height: 80px; background: var(--couleur-gradient-vert);">
+                            <i class="bi bi-people" style="font-size: 2rem; color: var(--couleur-marron);"></i>
+                        </div>
+                    </div>
+                    <h5 class="fw-bold mb-3" style="color: var(--couleur-marron);">Proximité</h5>
+                    <p style="color: var(--couleur-marron); opacity: 0.8;">
+                        Nous cultivons une relation de confiance avec nos clients,
+                        en étant à leur écoute et en les accompagnant.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nos engagements -->
+    <div class="row mb-5">
+        <div class="col-lg-6 animate-on-scroll">
+            <div class="card card-custom h-100">
+                <div class="card-body p-5">
+                    <h3 class="fw-bold mb-4" style="color: var(--couleur-marron);">
+                        <i class="bi bi-award me-2" style="color: var(--couleur-vert-fonce);"></i>Nos Engagements
+                    </h3>
+
+                    <div class="mb-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="bi bi-check-circle-fill me-3" style="color: var(--couleur-vert-menthe); font-size: 1.2rem;"></i>
+                            <span style="color: var(--couleur-marron);">Produits 100% naturels et biologiques</span>
+                        </div>
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="bi bi-check-circle-fill me-3" style="color: var(--couleur-vert-menthe); font-size: 1.2rem;"></i>
+                            <span style="color: var(--couleur-marron);">Livraison rapide et sécurisée</span>
+                        </div>
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="bi bi-check-circle-fill me-3" style="color: var(--couleur-vert-menthe); font-size: 1.2rem;"></i>
+                            <span style="color: var(--couleur-marron);">Service client réactif et bienveillant</span>
+                        </div>
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="bi bi-check-circle-fill me-3" style="color: var(--couleur-vert-menthe); font-size: 1.2rem;"></i>
+                            <span style="color: var(--couleur-marron);">Satisfaction garantie ou remboursé</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-check-circle-fill me-3" style="color: var(--couleur-vert-menthe); font-size: 1.2rem;"></i>
+                            <span style="color: var(--couleur-marron);">Respect de l'environnement</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 animate-on-scroll">
+            <div class="card card-custom h-100">
+                <div class="card-body p-5">
+                    <h3 class="fw-bold mb-4" style="color: var(--couleur-marron);">
+                        <i class="bi bi-graph-up me-2" style="color: var(--couleur-vert-fonce);"></i>Nos Résultats
+                    </h3>
+
+                    <div class="row text-center">
+                        <div class="col-6 mb-4">
+                            <div class="p-3 rounded bg-accent">
+                                <h4 class="fw-bold mb-1" style="color: var(--couleur-vert-fonce);">350+</h4>
+                                <small style="color: var(--couleur-marron);">Clients satisfaits</small>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-4">
+                            <div class="p-3 rounded bg-accent">
+                                <h4 class="fw-bold mb-1" style="color: var(--couleur-vert-menthe);">92%</h4>
+                                <small style="color: var(--couleur-marron);">Taux de satisfaction</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 rounded bg-accent">
+                                <h4 class="fw-bold mb-1" style="color: var(--couleur-marron);">1 an</h4>
+                                <small style="color: var(--couleur-marron);">D'expérience</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 rounded bg-accent">
+                                <h4 class="fw-bold mb-1" style="color: var(--couleur-vert-fonce);">24h</h4>
+                                <small style="color: var(--couleur-marron);">Support client</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

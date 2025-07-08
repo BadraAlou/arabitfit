@@ -1,0 +1,232 @@
+{% extends 'base.html' %}
+
+{% block titre %}Mon Panier - ArabiFit{% endblock %}
+
+{% block contenu %}
+<div class="container-fluid py-4">
+    <!-- En-tête moderne -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="text-center">
+                <h1 class="display-5 fw-bold mb-2" style="color: var(--couleur-marron);">Mon Panier</h1>
+                <p class="text-muted">Finalisez votre sélection avant de passer commande</p>
+            </div>
+        </div>
+    </div>
+
+    {% if panier.items.all %}
+    <div class="row g-4">
+        <!-- Liste des articles - Layout moderne -->
+        <div class="col-xl-8 col-lg-7">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0 py-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 fw-bold" style="color: var(--couleur-marron);">
+                            Articles sélectionnés
+                        </h5>
+                        <span class="badge rounded-pill" style="background: var(--couleur-rose-fonce); font-size: 0.9rem;">
+                            {{ panier.nombre_items }} article{{ panier.nombre_items|pluralize }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="card-body p-0">
+                    {% for item in panier.items.all %}
+                    <div class="border-bottom p-4 {% if forloop.last %}border-0{% endif %}">
+                        <div class="row align-items-center">
+                            <!-- Image produit -->
+                            <div class="col-lg-2 col-md-3 col-4">
+                                <div class="position-relative">
+                                    <img src="{{ item.produit.image.url }}" alt="{{ item.produit.nom }}"
+                                         class="img-fluid rounded-3 w-100"
+                                         style="height: 100px; object-fit: cover; border: 3px solid var(--couleur-rose-principal);">
+                                    <div class="position-absolute top-0 end-0 translate-middle">
+                                        <span class="badge rounded-pill bg-dark">{{ item.quantite }}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Informations produit -->
+                            <div class="col-lg-4 col-md-5 col-8">
+                                <h6 class="fw-bold mb-2" style="color: var(--couleur-marron);">{{ item.produit.nom }}</h6>
+                                <p class="text-muted small mb-2">{{ item.produit.description|truncatewords:10 }}</p>
+                                <span class="badge" style="background: var(--couleur-rose-principal); color: var(--couleur-marron);">
+                                    {{ item.produit.categorie.nom }}
+                                </span>
+                                <div class="mt-2">
+                                    {% if item.produit.est_en_stock %}
+                                        <small class="text-success fw-semibold">En stock</small>
+                                    {% else %}
+                                        <small class="text-danger fw-semibold">Plus en stock</small>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Prix et quantité -->
+                            <div class="col-lg-3 col-md-2 col-6 text-center">
+                                <div class="mb-3">
+                                    <small class="text-muted d-block">Prix unitaire</small>
+                                    <span class="fw-bold" style="color: var(--couleur-marron); font-size: 1.1rem;">
+                                        {{ item.produit.prix|floatformat:0 }} XOF
+                                    </span>
+                                </div>
+
+                                <!-- Contrôles de quantité -->
+                                <form method="post" action="{% url 'boutique:modifier_panier' item.id %}" class="d-inline-block">
+                                    {% csrf_token %}
+                                    <div class="input-group input-group-sm" style="width: 120px; margin: 0 auto;">
+                                        <button class="btn btn-outline-secondary" type="button" onclick="decrementQuantity({{ item.id }})">
+                                            <i class="bi bi-dash"></i>
+                                        </button>
+                                        <input type="number" name="quantite" id="quantity-{{ item.id }}"
+                                               value="{{ item.quantite }}" min="1" max="{{ item.produit.stock }}"
+                                               class="form-control text-center fw-bold" onchange="this.form.submit()">
+                                        <button class="btn btn-outline-secondary" type="button" onclick="incrementQuantity({{ item.id }}, {{ item.produit.stock }})">
+                                            <i class="bi bi-plus"></i>
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!-- Total et actions -->
+                            <div class="col-lg-3 col-md-2 col-6 text-end">
+                                <div class="mb-3">
+                                    <small class="text-muted d-block">Total</small>
+                                    <span class="fw-bold fs-5" style="color: var(--couleur-rose-fonce);">
+                                        {{ item.total|floatformat:0 }} XOF
+                                    </span>
+                                </div>
+                                <button class="btn btn-outline-danger btn-sm"
+                                        onclick="if(confirm('Supprimer cet article ?')) window.location.href='{% url 'boutique:supprimer_du_panier' item.id %}'">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Résumé moderne -->
+        <div class="col-xl-4 col-lg-5">
+            <div class="sticky-top" style="top: 100px;">
+                <!-- Résumé de commande -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white border-0 py-4">
+                        <h5 class="mb-0 fw-bold text-center" style="color: var(--couleur-marron);">
+                            Résumé de la commande
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-3 py-2">
+                            <span>Sous-total ({{ panier.nombre_items }} article{{ panier.nombre_items|pluralize }})</span>
+                            <span class="fw-semibold">{{ panier.total|floatformat:0 }} XOF</span>
+                        </div>
+
+                        <div class="d-flex justify-content-between mb-3 py-2">
+                            <span>Livraison</span>
+                            <span class="text-success fw-semibold">Gratuite</span>
+                        </div>
+
+                        <div class="d-flex justify-content-between mb-3 py-2">
+                            <span>TVA</span>
+                            <span class="text-muted">Incluse</span>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="d-flex justify-content-between mb-4 py-3 rounded"
+                             style="background: linear-gradient(135deg, rgba(255, 182, 193, 0.2), rgba(255, 192, 203, 0.1));">
+                            <span class="fw-bold fs-5">Total</span>
+                            <span class="fw-bold fs-4" style="color: var(--couleur-rose-fonce);">
+                                {{ panier.total|floatformat:0 }} XOF
+                            </span>
+                        </div>
+
+                        <div class="d-grid gap-3">
+                            <a href="{% url 'boutique:commander' %}" class="btn btn-primary-custom btn-lg">
+                                Passer la commande
+                            </a>
+                            <a href="{% url 'boutique:liste_produits' %}" class="btn btn-outline-secondary">
+                                Continuer les achats
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Avantages -->
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <h6 class="fw-bold mb-3" style="color: var(--couleur-marron);">Vos avantages</h6>
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <div class="mb-2">
+                                    <i class="bi bi-truck text-success" style="font-size: 1.5rem;"></i>
+                                </div>
+                                <small class="fw-semibold">Livraison gratuite</small>
+                            </div>
+                            <div class="col-4">
+                                <div class="mb-2">
+                                    <i class="bi bi-shield-check text-primary" style="font-size: 1.5rem;"></i>
+                                </div>
+                                <small class="fw-semibold">Paiement sécurisé</small>
+                            </div>
+                            <div class="col-4">
+                                <div class="mb-2">
+                                    <i class="bi bi-arrow-clockwise text-info" style="font-size: 1.5rem;"></i>
+                                </div>
+                                <small class="fw-semibold">Retour gratuit</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% else %}
+    <!-- Panier vide -->
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="text-center py-5">
+                <div class="mb-4">
+                    <i class="bi bi-cart-x" style="font-size: 5rem; color: var(--couleur-rose-fonce); opacity: 0.5;"></i>
+                </div>
+                <h3 class="mb-3" style="color: var(--couleur-marron);">Votre panier est vide</h3>
+                <p class="text-muted mb-4">Découvrez nos produits minceur naturels et commencez votre transformation !</p>
+
+                <div class="d-flex gap-3 justify-content-center">
+                    <a href="{% url 'boutique:liste_produits' %}" class="btn btn-primary-custom">
+                        Voir tous les produits
+                    </a>
+                    <a href="{% url 'boutique:accueil' %}" class="btn btn-outline-secondary">
+                        Retour à l'accueil
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+function incrementQuantity(itemId, maxStock) {
+    const input = document.getElementById('quantity-' + itemId);
+    const currentValue = parseInt(input.value);
+    if (currentValue < maxStock) {
+        input.value = currentValue + 1;
+        input.form.submit();
+    }
+}
+
+function decrementQuantity(itemId) {
+    const input = document.getElementById('quantity-' + itemId);
+    const currentValue = parseInt(input.value);
+    if (currentValue > 1) {
+        input.value = currentValue - 1;
+        input.form.submit();
+    }
+}
+</script>
+{% endblock %}

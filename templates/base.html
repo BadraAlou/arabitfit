@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block titre %}Biodetox Mali - Produits Détox Naturels{% endblock %}</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --couleur-marron: #8B4513;
+            --couleur-vert-menthe: #98FB98;
+            --couleur-vert-fonce: #228B22;
+            --couleur-marron-clair: #D2B48C;
+            --couleur-blanc-creme: #FFF8DC;
+            --couleur-gradient-principal: linear-gradient(135deg, #8B4513, #D2B48C);
+            --couleur-gradient-vert: linear-gradient(135deg, #98FB98, #90EE90);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, var(--couleur-blanc-creme), #F5F5DC);
+            min-height: 100vh;
+            color: var(--couleur-marron);
+            line-height: 1.6;
+            padding-top: 90px;
+        }
+
+        /* Overlay naturel subtil */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 20%, rgba(152, 251, 152, 0.1), transparent 50%),
+                        radial-gradient(circle at 70% 80%, rgba(139, 69, 19, 0.05), transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .bg-accent {
+            background: rgba(255, 248, 220, 0.3) !important;
+        }
+
+        .navbar-custom {
+            background: var(--couleur-gradient-principal);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(139, 69, 19, 0.3);
+            border-bottom: 2px solid var(--couleur-vert-fonce);
+            z-index: 1050;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 8px 0;
+        }
+
+        .navbar-custom .navbar-brand {
+            color: white !important;
+            font-weight: 500;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-custom .nav-link {
+            color: white !important;
+            font-weight: 500;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .navbar-custom .nav-link:hover {
+            color: var(--couleur-vert-menthe) !important;
+            transform: translateY(-2px);
+            transition: all 0.3s ease;
+        }
+
+        .logo-navbar {
+            height: 70px;
+            width: auto;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+            background: white;
+            padding: 5px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .logo-navbar:hover {
+            transform: scale(1.05);
+        }
+
+        .logo-auth {
+            height: 180px;
+            width: auto;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            transition: transform 0.3s ease;
+        }
+
+        .logo-auth:hover {
+            transform: scale(1.02);
+        }
+
+        .logo-footer {
+            height: 90px;
+            width: auto;
+            margin-right: 15px;
+            border-radius: 10px;
+            background: white;
+            padding: 5px;
+        }
+
+        .btn-primary-custom {
+            background: var(--couleur-gradient-principal);
+            border: 2px solid var(--couleur-vert-fonce);
+            color: white;
+            border-radius: 30px;
+            padding: 12px 30px;
+            font-weight: 600;
+            box-shadow: 0 6px 20px rgba(139, 69, 19, 0.4);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(139, 69, 19, 0.5);
+            background: linear-gradient(135deg, var(--couleur-marron-clair), var(--couleur-marron));
+            color: white;
+        }
+
+        .btn-secondary-custom {
+            background: var(--couleur-gradient-vert);
+            border: 2px solid var(--couleur-marron);
+            color: var(--couleur-marron);
+            border-radius: 30px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-secondary-custom:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(152, 251, 152, 0.4);
+            background: linear-gradient(135deg, #90EE90, var(--couleur-vert-menthe));
+            color: var(--couleur-marron);
+        }
+
+        .card-custom {
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid var(--couleur-vert-menthe);
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(152, 251, 152, 0.3);
+            transition: all 0.4s ease;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-custom:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(152, 251, 152, 0.5);
+            border-color: var(--couleur-vert-fonce);
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg,
+                rgba(152, 251, 152, 0.3),
+                rgba(255, 248, 220, 0.8),
+                rgba(139, 69, 19, 0.1));
+            padding: 100px 0;
+            color: var(--couleur-marron);
+            position: relative;
+            overflow: hidden;
+            margin-top: -90px;
+            padding-top: 190px;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(152, 251, 152, 0.1) 0%, transparent 70%);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        .footer-custom {
+            background: var(--couleur-gradient-principal);
+            color: white;
+            padding: 50px 0 30px;
+            border-top: 4px solid var(--couleur-vert-fonce);
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-custom::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--couleur-gradient-vert);
+        }
+
+        .badge-panier {
+            background: var(--couleur-gradient-vert);
+            color: var(--couleur-marron);
+            font-weight: bold;
+            border: 2px solid white;
+            box-shadow: 0 2px 8px rgba(152, 251, 152, 0.4);
+        }
+
+        .prix-produit {
+            background: var(--couleur-gradient-principal);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            font-size: 1.3em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .stock-badge {
+            background: var(--couleur-gradient-vert);
+            color: var(--couleur-marron);
+            font-size: 0.8em;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-weight: 600;
+            border: 2px solid var(--couleur-marron);
+            box-shadow: 0 2px 8px rgba(152, 251, 152, 0.4);
+        }
+
+        .rupture-stock {
+            background: linear-gradient(135deg, #ff6b6b, #ff5252);
+            color: white;
+            border-color: #d32f2f;
+        }
+
+        .form-control {
+            border: 2px solid var(--couleur-vert-menthe);
+            border-radius: 15px;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.9);
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--couleur-vert-fonce);
+            box-shadow: 0 0 0 0.3rem rgba(152, 251, 152, 0.25);
+            background: white;
+        }
+
+        .form-select {
+            border: 2px solid var(--couleur-vert-menthe);
+            border-radius: 15px;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .input-group-text {
+            background: var(--couleur-vert-menthe);
+            border: 2px solid var(--couleur-vert-menthe);
+            color: var(--couleur-marron);
+            font-weight: 600;
+        }
+
+        .alert-custom-success {
+            background: var(--couleur-gradient-vert);
+            border: 2px solid var(--couleur-vert-fonce);
+            color: var(--couleur-marron);
+            border-radius: 15px;
+            font-weight: 500;
+        }
+
+        .alert-custom-error {
+            background: linear-gradient(135deg, #ffcdd2, #ffebee);
+            border: 2px solid #f44336;
+            color: #d32f2f;
+            border-radius: 15px;
+            font-weight: 500;
+        }
+
+        main {
+            position: relative;
+            z-index: 1;
+            min-height: calc(100vh - 160px);
+        }
+
+        .alert {
+            position: relative;
+            z-index: 10;
+        }
+
+        .sticky-top {
+            z-index: 10;
+        }
+
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .particles-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            background: var(--couleur-vert-menthe);
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: float-particle 8s infinite linear;
+        }
+
+        @keyframes float-particle {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.6;
+            }
+            90% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Styles du Chatbot Biodetox Mali - AMÉLIORÉS */
+        .chatbot-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .chatbot-button {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: var(--couleur-gradient-vert);
+            border: 3px solid white;
+            box-shadow: 0 8px 25px rgba(152, 251, 152, 0.4);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chatbot-button:hover {
+            transform: scale(1.1) translateY(-2px);
+            box-shadow: 0 12px 35px rgba(152, 251, 152, 0.6);
+        }
+
+        .chatbot-icon {
+            font-size: 1.8rem;
+            color: var(--couleur-marron);
+            transition: transform 0.3s ease;
+        }
+
+        .chatbot-window {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            width: 380px;
+            height: 550px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            border: 2px solid var(--couleur-vert-menthe);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            transform: scale(0.8) translateY(20px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .chatbot-window.show {
+            display: flex;
+            transform: scale(1) translateY(0);
+            opacity: 1;
+        }
+
+        .chatbot-header {
+            background: var(--couleur-gradient-principal);
+            color: white;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid var(--couleur-vert-fonce);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .chatbot-header-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .chatbot-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--couleur-gradient-vert);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            border: 2px solid white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .chatbot-avatar i {
+            font-size: 1.2rem;
+            color: var(--couleur-marron);
+        }
+
+        .chatbot-name {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 2px;
+        }
+
+        .chatbot-status {
+            font-size: 0.8rem;
+            opacity: 0.9;
+            display: flex;
+            align-items: center;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #4ade80;
+            border-radius: 50%;
+            margin-right: 6px;
+            animation: pulse-dot 2s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .chatbot-close {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.2rem;
+        }
+
+        .chatbot-close:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.1);
+        }
+
+        .chatbot-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: linear-gradient(135deg, #fafafa, #f8f9fa);
+            max-height: 400px;
+        }
+
+        .chatbot-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chatbot-messages::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .chatbot-messages::-webkit-scrollbar-thumb {
+            background: var(--couleur-vert-menthe);
+            border-radius: 3px;
+        }
+
+        .message {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: var(--couleur-gradient-vert);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            flex-shrink: 0;
+            border: 2px solid white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .message-avatar i {
+            font-size: 1rem;
+            color: var(--couleur-marron);
+        }
+
+        .message-content {
+            max-width: 75%;
+            padding: 15px 18px;
+            border-radius: 18px;
+            position: relative;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .message.bot .message-content {
+            background: linear-gradient(135deg, rgba(152, 251, 152, 0.15), rgba(255,255,255,0.95));
+            border-bottom-left-radius: 8px;
+            border: 1px solid rgba(152, 251, 152, 0.3);
+            color: var(--couleur-marron);
+        }
+
+        .message.user .message-content {
+            background: var(--couleur-gradient-principal);
+            color: white;
+            border-bottom-right-radius: 8px;
+            margin-left: auto;
+        }
+
+        .message-text {
+            margin: 0;
+            line-height: 1.5;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            margin-top: 8px;
+            text-align: right;
+        }
+
+        .message.bot .message-time {
+            text-align: left;
+        }
+
+        .quick-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .quick-action {
+            background: linear-gradient(135deg, rgba(152, 251, 152, 0.3), rgba(255, 248, 220, 0.2));
+            border: 1px solid var(--couleur-vert-menthe);
+            border-radius: 20px;
+            padding: 8px 14px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--couleur-marron);
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .quick-action:hover {
+            background: var(--couleur-gradient-vert);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(152, 251, 152, 0.4);
+        }
+
+        .chatbot-input-area {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .chatbot-input-container {
+            display: flex;
+            align-items: center;
+            background: #f8f9fa;
+            border-radius: 25px;
+            padding: 8px;
+            border: 2px solid var(--couleur-vert-menthe);
+            transition: all 0.3s ease;
+        }
+
+        .chatbot-input-container:focus-within {
+            border-color: var(--couleur-vert-fonce);
+            box-shadow: 0 0 0 3px rgba(152, 251, 152, 0.2);
+        }
+
+        .chatbot-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 12px 16px;
+            font-size: 0.95rem;
+            outline: none;
+            color: var(--couleur-marron);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .chatbot-input::placeholder {
+            color: #999;
+            font-weight: 400;
+        }
+
+        .chatbot-send {
+            background: var(--couleur-gradient-vert);
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--couleur-marron);
+            font-size: 1.1rem;
+            box-shadow: 0 2px 8px rgba(152, 251, 152, 0.3);
+        }
+
+        .chatbot-send:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(152, 251, 152, 0.5);
+        }
+
+        .chatbot-notification {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 20px;
+            height: 20px;
+            background: #ef4444;
+            border-radius: 50%;
+            display: none;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            body {
+                padding-top: 80px;
+            }
+
+            .hero-section {
+                padding: 60px 0;
+                margin-top: -80px;
+                padding-top: 140px;
+            }
+
+            .btn-primary-custom,
+            .btn-secondary-custom {
+                padding: 10px 20px;
+                font-size: 0.9em;
+            }
+
+            .logo-navbar {
+                height: 60px;
+            }
+
+            .logo-auth {
+                height: 150px;
+                margin-bottom: 15px;
+            }
+
+            .logo-footer {
+                height: 70px;
+                margin-right: 10px;
+            }
+
+            .chatbot-window {
+                width: 320px;
+                height: 480px;
+                right: -10px;
+            }
+
+            .chatbot-button {
+                width: 60px;
+                height: 60px;
+            }
+
+            .chatbot-icon {
+                font-size: 1.5rem;
+            }
+
+            .message-content {
+                max-width: 85%;
+            }
+        }
+
+        /* Scrollbar personnalisée */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--couleur-blanc-creme);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--couleur-gradient-vert);
+            border-radius: 6px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--couleur-gradient-principal);
+        }
+    </style>
+
+    {% block styles_extra %}{% endblock %}
+</head>
+
+<body>
+    <!-- Conteneur de particules -->
+    <div class="particles-container" id="particles"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'boutique:accueil' %}">
+                {% load static %}
+                <img src="{% static 'images/biodetox-mali-logo.png' %}" alt="Biodetox Mali" class="logo-navbar">
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'boutique:accueil' %}">
+                            <i class="bi bi-house me-1"></i>Accueil
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'boutique:liste_produits' %}">
+                            <i class="bi bi-grid me-1"></i>Produits
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'boutique:a_propos' %}">
+                            <i class="bi bi-info-circle me-1"></i>À propos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'boutique:contact' %}">
+                            <i class="bi bi-envelope me-1"></i>Contact
+                        </a>
+                    </li>
+                </ul>
+
+                <ul class="navbar-nav">
+                    {% if user.is_authenticated %}
+                        {% if user.is_staff or user.is_superuser %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'boutique:admin_dashboard' %}">
+                                    <i class="bi bi-speedometer2 me-1"></i>Tableau de bord
+                                </a>
+                            </li>
+                        {% endif %}
+                        <li class="nav-item">
+                            <a class="nav-link position-relative" href="{% url 'boutique:voir_panier' %}">
+                                <i class="bi bi-cart3 me-1"></i>Panier
+                                {% if panier_nombre_items > 0 %}
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill badge-panier">
+                                        {{ panier_nombre_items }}
+                                    </span>
+                                {% endif %}
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'boutique:mes_commandes' %}">
+                                <i class="bi bi-bag me-1"></i>Mes Commandes
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-person-circle me-1"></i>{{ user.username }}
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{% url 'boutique:deconnexion' %}">
+                                    <i class="bi bi-box-arrow-right me-2"></i>Déconnexion
+                                </a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'boutique:connexion' %}">
+                                <i class="bi bi-box-arrow-in-right me-1"></i>Connexion
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'boutique:inscription' %}">
+                                <i class="bi bi-person-plus me-1"></i>Inscription
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Messages -->
+    {% if messages %}
+        <div class="container mt-3">
+            {% for message in messages %}
+                <div class="alert {% if message.tags == 'success' %}alert-custom-success{% elif message.tags == 'error' %}alert-custom-error{% else %}alert-{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+                    <i class="bi bi-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-triangle{% else %}info-circle{% endif %} me-2"></i>
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Contenu Principal -->
+    <main>
+        {% block contenu %}{% endblock %}
+    </main>
+
+    <!-- Chatbot Biodetox Mali -->
+    <div class="chatbot-container">
+        <!-- Bouton du chatbot -->
+        <div class="chatbot-button" id="chatbotButton">
+            <i class="bi bi-chat-dots chatbot-icon"></i>
+            <div class="chatbot-notification" id="chatbotNotification"></div>
+        </div>
+
+        <!-- Fenêtre du chatbot -->
+        <div class="chatbot-window" id="chatbotWindow">
+            <!-- En-tête -->
+            <div class="chatbot-header">
+                <div class="chatbot-header-info">
+                    <div class="chatbot-avatar">
+                        <i class="bi bi-person-circle"></i>
+                    </div>
+                    <div>
+                        <div class="chatbot-name">Adiaratou Sidibé</div>
+                        <div class="chatbot-status">
+                            <span class="status-dot"></span>
+                            En ligne
+                        </div>
+                    </div>
+                </div>
+                <button class="chatbot-close" id="chatbotClose">
+                    <i class="bi bi-x"></i>
+                </button>
+            </div>
+
+            <!-- Zone des messages -->
+            <div class="chatbot-messages" id="chatbotMessages">
+                <!-- Les messages seront ajoutés ici dynamiquement -->
+            </div>
+
+            <!-- Zone de saisie -->
+            <div class="chatbot-input-area">
+                <div class="chatbot-input-container">
+                    <input type="text" class="chatbot-input" id="chatbotInput" placeholder="Tapez votre message...">
+                    <button class="chatbot-send" id="chatbotSend">
+                        <i class="bi bi-send"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer-custom mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="d-flex align-items-center mb-3">
+                        {% load static %}
+                        <img src="{% static 'images/biodetox-mali-logo.png' %}" alt="Biodetox Mali" class="logo-footer">
+                    </div>
+                    <p class="mb-3">Votre partenaire pour une détox naturelle et une silhouette harmonieuse avec nos produits Arabigum.</p>
+                    <div class="d-flex gap-3">
+                        <a href="https://wa.me/22367482123" target="_blank" class="text-white fs-4 hover-effect"><i class="bi bi-whatsapp"></i></a>
+                        <a href="#" class="text-white fs-4 hover-effect"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="text-white fs-4 hover-effect"><i class="bi bi-instagram"></i></a>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-4">
+                    <h5 class="fw-bold">Navigation</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="{% url 'boutique:accueil' %}" class="text-white-50 text-decoration-none hover-effect">Accueil</a></li>
+                        <li class="mb-2"><a href="{% url 'boutique:liste_produits' %}" class="text-white-50 text-decoration-none hover-effect">Produits</a></li>
+                        <li class="mb-2"><a href="{% url 'boutique:a_propos' %}" class="text-white-50 text-decoration-none hover-effect">À propos</a></li>
+                        <li class="mb-2"><a href="{% url 'boutique:contact' %}" class="text-white-50 text-decoration-none hover-effect">Contact</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-md-4 mb-4">
+                    <h5 class="fw-bold">Contact</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><i class="bi bi-envelope me-2" style="color: var(--couleur-vert-menthe);"></i>contact@biodetoxmali.com</li>
+                        <li class="mb-2"><i class="bi bi-telephone me-2" style="color: var(--couleur-vert-menthe);"></i>+223 83 69 11 15</li>
+                        <li class="mb-2"><i class="bi bi-telephone me-2" style="color: var(--couleur-vert-menthe);"></i>+223 72 47 19 35</li>
+                        <li class="mb-2"><i class="bi bi-geo-alt me-2" style="color: var(--couleur-vert-menthe);"></i>Bamako, Mali</li>
+                    </ul>
+                </div>
+            </div>
+
+            <hr class="border-white-50">
+
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="mb-0 text-white-50">&copy; 2025 Biodetox Mali. Tous droits réservés.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <small class="text-white-50">
+                        <a href="#" class="text-white-50 text-decoration-none me-3 hover-effect">Mentions légales</a>
+                        <a href="#" class="text-white-50 text-decoration-none hover-effect">Politique de confidentialité</a>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Création des particules flottantes
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 15;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.width = Math.random() * 6 + 2 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.animationDelay = Math.random() * 8 + 's';
+                particle.style.animationDuration = (Math.random() * 4 + 6) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Animation au scroll
+        function animateOnScroll() {
+            const elements = document.querySelectorAll('.animate-on-scroll');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            });
+
+            elements.forEach(element => {
+                observer.observe(element);
+            });
+        }
+
+        // Chatbot Biodetox Mali - AMÉLIORÉ
+        class BiodetoxChatbot {
+            constructor() {
+                this.isOpen = false;
+                this.messages = [];
+                this.responses = {
+                    'bonjour': 'Bonjour ! Je suis Adiaratou Sidibé, votre conseillère Biodetox Mali ! 🌿 Comment puis-je vous aider aujourd\'hui ?',
+                    'salut': 'Salut ! Je suis Adiaratou de Biodetox Mali ! 😊 Que puis-je faire pour vous ?',
+                    'produits': 'Nous proposons une gamme complète de produits détox naturels Arabigum : thés, gélules, et shakers. Tous nos produits sont 100% naturels ! 🌱',
+                    'prix': 'Nos prix sont très compétitifs ! Vous pouvez consulter tous nos tarifs sur la page produits. Nous acceptons les paiements par carte bancaire et Mobile Money. 💳',
+                    'livraison': 'Nous livrons partout au Mali ! Livraison gratuite à Bamako (3-5 jours) et dans les autres régions (5-7 jours). 🚚',
+                    'commande': 'Pour passer commande, créez un compte, ajoutez vos produits au panier et suivez les étapes. C\'est très simple ! 🛒',
+                    'paiement': 'Nous acceptons les paiements par carte bancaire (Stripe) et Mobile Money (Orange Money, Moov Money) via CinetPay. 💰',
+                    'naturel': 'Oui ! Tous nos produits Arabigum sont 100% naturels, sans additifs chimiques. Votre santé est notre priorité ! 🌿',
+                    'contact': 'Vous pouvez nous contacter par email à contact@biodetoxmali.com, par téléphone au +223 83 69 11 15 ou +223 72 47 19 35, ou via WhatsApp au +223 67 48 21 23. 📞',
+                    'aide': 'Je peux vous aider avec : les produits, les commandes, les paiements, la livraison, et toute question sur Biodetox Mali ! 💬',
+                    'merci': 'De rien ! C\'est un plaisir de vous aider. N\'hésitez pas si vous avez d\'autres questions ! 😊',
+                    'au revoir': 'Au revoir ! Merci de votre visite chez Biodetox Mali. À bientôt ! 👋'
+                };
+                this.quickActions = [
+                    'Voir les produits',
+                    'Comment commander ?',
+                    'Modes de paiement',
+                    'Délais de livraison',
+                    'Contacter le support'
+                ];
+                this.init();
+            }
+
+            init() {
+                this.bindEvents();
+                this.showWelcomeMessage();
+                this.showNotification();
+            }
+
+            bindEvents() {
+                const button = document.getElementById('chatbotButton');
+                const closeBtn = document.getElementById('chatbotClose');
+                const sendBtn = document.getElementById('chatbotSend');
+                const input = document.getElementById('chatbotInput');
+
+                button.addEventListener('click', () => this.toggleChatbot());
+                closeBtn.addEventListener('click', () => this.closeChatbot());
+                sendBtn.addEventListener('click', () => this.sendMessage());
+                input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.sendMessage();
+                });
+            }
+
+            toggleChatbot() {
+                const window = document.getElementById('chatbotWindow');
+                const notification = document.getElementById('chatbotNotification');
+
+                if (this.isOpen) {
+                    this.closeChatbot();
+                } else {
+                    window.classList.add('show');
+                    notification.style.display = 'none';
+                    this.isOpen = true;
+                    this.scrollToBottom();
+                    document.getElementById('chatbotInput').focus();
+                }
+            }
+
+            closeChatbot() {
+                const window = document.getElementById('chatbotWindow');
+                window.classList.remove('show');
+                this.isOpen = false;
+            }
+
+            showNotification() {
+                const notification = document.getElementById('chatbotNotification');
+                setTimeout(() => {
+                    notification.style.display = 'block';
+                }, 3000);
+            }
+
+            showWelcomeMessage() {
+                setTimeout(() => {
+                    this.addBotMessage('Bonjour ! Je suis Adiaratou Sidibé, conseillère chez Biodetox Mali. 🌿✨\n\nBienvenue sur notre site ! Je suis là pour vous accompagner dans votre parcours détox et vous aider à trouver les produits qui vous conviennent.\n\nQue puis-je faire pour vous aujourd\'hui ?', true);
+                }, 500);
+            }
+
+            addMessage(content, isBot = false, showActions = false) {
+                const messagesContainer = document.getElementById('chatbotMessages');
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${isBot ? 'bot' : 'user'}`;
+
+                const now = new Date();
+                const time = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+
+                if (isBot) {
+                    messageDiv.innerHTML = `
+                        <div class="message-avatar">
+                            <i class="bi bi-person-circle"></i>
+                        </div>
+                        <div class="message-content">
+                            <p class="message-text">${content.replace(/\n/g, '<br>')}</p>
+                            <div class="message-time">${time}</div>
+                            ${showActions ? this.generateQuickActions() : ''}
+                        </div>
+                    `;
+                } else {
+                    messageDiv.innerHTML = `
+                        <div class="message-content">
+                            <p class="message-text">${content}</p>
+                            <div class="message-time">${time}</div>
+                        </div>
+                    `;
+                }
+
+                messagesContainer.appendChild(messageDiv);
+                this.scrollToBottom();
+
+                if (showActions) {
+                    this.bindQuickActions();
+                }
+            }
+
+            addBotMessage(content, showActions = false) {
+                setTimeout(() => {
+                    this.addMessage(content, true, showActions);
+                }, 1000 + Math.random() * 1000);
+            }
+
+            generateQuickActions() {
+                return `
+                    <div class="quick-actions">
+                        ${this.quickActions.map(action =>
+                            `<div class="quick-action" data-action="${action}">${action}</div>`
+                        ).join('')}
+                    </div>
+                `;
+            }
+
+            bindQuickActions() {
+                const actions = document.querySelectorAll('.quick-action');
+                actions.forEach(action => {
+                    action.addEventListener('click', () => {
+                        const actionText = action.dataset.action;
+                        this.handleQuickAction(actionText);
+                    });
+                });
+            }
+
+            handleQuickAction(action) {
+                this.addMessage(action, false);
+
+                switch(action) {
+                    case 'Voir les produits':
+                        this.addBotMessage('Découvrez notre gamme complète de produits détox naturels ! 🌿\n\n• Thés Arabigum\n• Gélules détox\n• Shakers protéinés\n\nTous nos produits sont 100% naturels et certifiés. Voulez-vous que je vous redirige vers notre boutique ?');
+                        break;
+                    case 'Comment commander ?':
+                        this.addBotMessage('Commander chez Biodetox Mali est très simple ! 🛒\n\n1. Créez votre compte\n2. Parcourez nos produits\n3. Ajoutez au panier\n4. Renseignez vos informations\n5. Choisissez votre mode de paiement\n6. Confirmez votre commande\n\nBesoin d\'aide pour une étape spécifique ?');
+                        break;
+                    case 'Modes de paiement':
+                        this.addBotMessage('Nous acceptons plusieurs modes de paiement sécurisés ! 💳\n\n• Carte bancaire (Visa, Mastercard)\n• Orange Money\n• Moov Money\n\nTous les paiements sont 100% sécurisés et cryptés.');
+                        break;
+                    case 'Délais de livraison':
+                        this.addBotMessage('Nos délais de livraison sont rapides ! 🚚\n\n• Bamako : 3-5 jours ouvrables\n• Autres régions : 5-7 jours ouvrables\n• Livraison GRATUITE partout au Mali\n\nVous recevrez un email de suivi avec votre numéro de tracking.');
+                        break;
+                    case 'Contacter le support':
+                        this.addBotMessage('Notre équipe support est là pour vous ! 📞\n\n• Email : contact@biodetoxmali.com\n• Téléphone : +223 83 69 11 15 / +223 72 47 19 35\n• WhatsApp : +223 67 48 21 23\n• Horaires : Lun-Ven 8h-18h, Sam 9h-16h\n\nOu utilisez notre formulaire de contact sur le site !');
+                        break;
+                }
+            }
+
+            sendMessage() {
+                const input = document.getElementById('chatbotInput');
+                const message = input.value.trim();
+
+                if (message) {
+                    this.addMessage(message, false);
+                    input.value = '';
+                    this.processMessage(message);
+                }
+            }
+
+            processMessage(message) {
+                const lowerMessage = message.toLowerCase();
+                let response = "Je comprends votre question ! 😊 En tant que conseillère Biodetox Mali, je suis là pour vous aider. N'hésitez pas à me poser des questions plus précises sur nos produits ou services.";
+
+                // Recherche de mots-clés dans le message
+                for (const [keyword, reply] of Object.entries(this.responses)) {
+                    if (lowerMessage.includes(keyword)) {
+                        response = reply;
+                        break;
+                    }
+                }
+
+                // Réponses spéciales pour certains cas
+                if (lowerMessage.includes('arabigum') || lowerMessage.includes('biodetox')) {
+                    response = 'Chez Biodetox Mali, nos produits Arabigum sont conçus pour votre bien-être ! 🌿 Nos solutions naturelles vous accompagnent dans votre parcours détox. Que souhaitez-vous savoir exactement ?';
+                } else if (lowerMessage.includes('detox') || lowerMessage.includes('poids')) {
+                    response = 'Nos produits détox Arabigum sont parfaits pour vous accompagner ! 💪 Ils sont 100% naturels et efficaces. Consultez notre gamme complète pour trouver celui qui vous convient.';
+                } else if (lowerMessage.includes('compte') || lowerMessage.includes('inscription')) {
+                    response = 'Créer un compte Biodetox Mali vous donne accès à de nombreux avantages ! 🎁 Commandes sauvegardées, suivi des livraisons, offres exclusives... C\'est gratuit et rapide !';
+                }
+
+                this.addBotMessage(response);
+            }
+
+            scrollToBottom() {
+                const messagesContainer = document.getElementById('chatbotMessages');
+                setTimeout(() => {
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                }, 100);
+            }
+        }
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+            animateOnScroll();
+
+            // Initialiser le chatbot
+            new BiodetoxChatbot();
+        });
+    </script>
+
+    {% block scripts_extra %}{% endblock %}
+</body>
+</html>

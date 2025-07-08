@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+
+{% block titre %}Mes Commandes - Biodetox Mali{% endblock %}
+
+{% block contenu %}
+<div class="container-fluid py-4">
+    <!-- En-tête -->
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h1 class="display-5 fw-bold mb-2" style="color: var(--couleur-marron);">Mes Commandes</h1>
+            <p class="text-muted">Suivez l'état de toutes vos commandes</p>
+        </div>
+    </div>
+
+    {% if commandes %}
+    <!-- Liste des commandes -->
+    <div class="row g-4">
+        {% for commande in commandes %}
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0 py-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <h5 class="mb-1 fw-bold" style="color: var(--couleur-marron);">
+                                Commande {{ commande.numero }}
+                            </h5>
+                            <small class="text-muted">{{ commande.date_creation|date:"d F Y à H:i" }}</small>
+                        </div>
+                        <div class="col-md-6 text-md-end mt-2 mt-md-0">
+                            {% if commande.statut == 'en_attente' %}
+                                <span class="badge bg-warning text-dark px-3 py-2">En attente de paiement</span>
+                            {% elif commande.statut == 'confirmee' %}
+                                <span class="badge px-3 py-2" style="background: var(--couleur-gradient-vert); color: var(--couleur-marron);">Confirmée et payée</span>
+                            {% elif commande.statut == 'en_preparation' %}
+                                <span class="badge bg-info px-3 py-2">En préparation</span>
+                            {% elif commande.statut == 'expediee' %}
+                                <span class="badge bg-primary px-3 py-2">Expédiée</span>
+                            {% elif commande.statut == 'en_livraison' %}
+                                <span class="badge bg-secondary px-3 py-2">En cours de livraison</span>
+                            {% elif commande.statut == 'livree' %}
+                                <span class="badge bg-success px-3 py-2">Livrée</span>
+                            {% elif commande.statut == 'annulee' %}
+                                <span class="badge bg-danger px-3 py-2">Annulée</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Informations de commande -->
+                        <div class="col-lg-8">
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <h6 class="fw-bold mb-2">
+                                        <i class="bi bi-geo-alt me-2 text-primary"></i>Livraison
+                                    </h6>
+                                    <div class="small">
+                                        <div class="fw-semibold">{{ commande.nom_complet }}</div>
+                                        <div class="text-muted">{{ commande.ville }}</div>
+                                        <div class="text-muted">{{ commande.telephone }}</div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <h6 class="fw-bold mb-2">
+                                        <i class="bi bi-credit-card me-2" style="color: var(--couleur-vert-fonce);"></i>Paiement
+                                    </h6>
+                                    <div class="small">
+                                        <div>
+                                            {% if commande.methode_paiement == 'stripe' %}
+                                                <i class="bi bi-credit-card me-1"></i>Carte bancaire
+                                            {% elif commande.methode_paiement == 'cinetpay' %}
+                                                <i class="bi bi-phone me-1"></i>Mobile Money
+                                            {% endif %}
+                                        </div>
+                                        <div class="fw-bold" style="color: var(--couleur-vert-fonce);">
+                                            {{ commande.total|floatformat:0 }} XOF
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Articles commandés -->
+                            <h6 class="fw-bold mb-3">
+                                <i class="bi bi-box me-2 text-info"></i>Articles ({{ commande.items.count }})
+                            </h6>
+                            <div class="row g-2">
+                                {% for item in commande.items.all|slice:":3" %}
+                                <div class="col-md-4">
+                                    <div class="d-flex align-items-center p-2 rounded bg-accent">
+                                        {% if item.produit.image %}
+                                            <img src="{{ item.produit.image.url }}" alt="{{ item.nom_produit }}"
+                                                 class="rounded me-2" style="width: 40px; height: 40px; object-fit: cover;">
+                                        {% endif %}
+                                        <div class="flex-grow-1">
+                                            <div class="fw-semibold small">{{ item.nom_produit|truncatechars:20 }}</div>
+                                            <small class="text-muted">Qté: {{ item.quantite }}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                                {% if commande.items.count > 3 %}
+                                <div class="col-md-4">
+                                    <div class="d-flex align-items-center justify-content-center p-2 rounded text-muted bg-accent" style="height: 56px;">
+                                        <small>+{{ commande.items.count|add:"-3" }} autre{{ commande.items.count|add:"-3"|pluralize }}</small>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="col-lg-4">
+                            <div class="text-center">
+                                <div class="mb-3">
+                                    <div class="fw-bold fs-4" style="color: var(--couleur-vert-fonce);">
+                                        {{ commande.total|floatformat:0 }} XOF
+                                    </div>
+                                </div>
+
+                                <div class="d-grid gap-2">
+                                    <a href="{% url 'boutique:detail_commande' commande.numero %}" class="btn btn-primary-custom">
+                                        <i class="bi bi-eye me-2"></i>Voir les détails
+                                    </a>
+
+                                    {% if commande.statut == 'en_attente' %}
+                                        <a href="{% url 'boutique:paiement' commande.numero %}" class="btn btn-warning">
+                                            <i class="bi bi-credit-card me-2"></i>Payer
+                                        </a>
+                                    {% elif commande.statut in 'confirmee,en_preparation,expediee,en_livraison,livree' %}
+                                        <a href="{% url 'boutique:telecharger_facture' commande.numero %}" class="btn btn-success">
+                                            <i class="bi bi-download me-2"></i>Télécharger facture
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% else %}
+    <!-- Aucune commande -->
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="text-center py-5">
+                <div class="mb-4">
+                    <i class="bi bi-bag-x" style="font-size: 5rem; color: var(--couleur-vert-fonce); opacity: 0.5;"></i>
+                </div>
+                <h3 class="mb-3" style="color: var(--couleur-marron);">Aucune commande</h3>
+                <p class="text-muted mb-4">
+                    Vous n'avez pas encore passé de commande. Découvrez nos produits détox naturels !
+                </p>
+
+                <div class="d-flex gap-3 justify-content-center">
+                    <a href="{% url 'boutique:liste_produits' %}" class="btn btn-primary-custom">
+                        <i class="bi bi-grid me-2"></i>Voir tous les produits
+                    </a>
+                    <a href="{% url 'boutique:accueil' %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-house me-2"></i>Retour à l'accueil
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

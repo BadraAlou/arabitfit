@@ -1,0 +1,260 @@
+{% extends 'base.html' %}
+
+{% block titre %}{{ categorie.nom }} - Biodetox Mali{% endblock %}
+
+{% block contenu %}
+<div class="container my-5">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'boutique:accueil' %}" class="text-decoration-none">Accueil</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'boutique:liste_produits' %}" class="text-decoration-none">Produits</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ categorie.nom }}</li>
+        </ol>
+    </nav>
+
+    <!-- En-tête de catégorie -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card card-custom text-center p-5 bg-accent">
+                <div class="row align-items-center">
+                    <div class="col-lg-8 mx-auto">
+                        {% if categorie.image %}
+                            <img src="{{ categorie.image.url }}" alt="{{ categorie.nom }}"
+                                 class="category-image mb-4" style="max-height: 150px; width: auto;">
+                        {% endif %}
+                        <h1 class="display-5 fw-bold mb-4" style="color: var(--couleur-marron);">
+                            <i class="bi bi-tag me-3" style="color: var(--couleur-vert-fonce);"></i>{{ categorie.nom }}
+                        </h1>
+                        {% if categorie.description %}
+                            <p class="lead" style="color: var(--couleur-marron);">{{ categorie.description }}</p>
+                        {% else %}
+                            <p class="lead" style="color: var(--couleur-marron);">Découvrez notre sélection de produits {{ categorie.nom|lower }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistiques de la catégorie -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card card-custom p-3 bg-accent">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="fw-bold" style="color: var(--couleur-marron);">
+                            {{ produits.count }} produit{{ produits.count|pluralize }} trouvé{{ produits.count|pluralize }}
+                        </span>
+                        <span class="text-muted ms-2">dans {{ categorie.nom }}</span>
+                    </div>
+                    <div>
+                        <a href="{% url 'boutique:liste_produits' %}" class="btn btn-outline-secondary btn-sm">
+                            <i class="bi bi-grid-3x3-gap me-1"></i>Tous les produits
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Liste des produits de la catégorie -->
+    <div class="row g-4">
+        {% for produit in produits %}
+        <div class="col-lg-4 col-md-6 animate-on-scroll">
+            <a href="{% url 'boutique:detail_produit' produit.pk %}" class="text-decoration-none">
+                <div class="card card-custom h-100 position-relative overflow-hidden product-card-clickable">
+                    <div class="position-relative">
+                        <img src="{{ produit.image.url }}" class="card-img-top" alt="{{ produit.nom }}" style="height: 300px; object-fit: cover;">
+                        <div class="position-absolute top-0 end-0 m-3">
+                            {% if produit.est_en_stock %}
+                                <span class="stock-badge">En stock</span>
+                            {% else %}
+                                <span class="stock-badge rupture-stock">Rupture de stock</span>
+                            {% endif %}
+                        </div>
+                        <!-- Badge de catégorie -->
+                        <div class="position-absolute top-0 start-0 m-3">
+                            <span class="badge" style="background: var(--couleur-vert-fonce); color: white; padding: 8px 12px; border-radius: 15px;">
+                                {{ categorie.nom }}
+                            </span>
+                        </div>
+                        <!-- Overlay au survol -->
+                        <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center opacity-0 hover-overlay"
+                             style="background: rgba(152, 251, 152, 0.8); transition: opacity 0.3s ease;">
+                            <div class="text-center text-white">
+                                <i class="bi bi-eye" style="font-size: 2rem;"></i>
+                                <p class="mt-2 mb-0 fw-bold">Voir les détails</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body d-flex flex-column p-4 bg-accent">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h5 class="card-title fw-bold mb-0 flex-grow-1" style="color: var(--couleur-marron);">{{ produit.nom }}</h5>
+                            <span class="prix-produit ms-2">{{ produit.prix|floatformat:0 }} XOF</span>
+                        </div>
+
+                        <!-- Note du produit -->
+                        {% if produit.nombre_avis > 0 %}
+                        <div class="mb-3">
+                            <div class="d-flex align-items-center">
+                                {% for i in "12345" %}
+                                    {% if forloop.counter <= produit.note_moyenne %}
+                                        <i class="bi bi-star-fill" style="color: #ffc107; font-size: 0.8rem;"></i>
+                                    {% else %}
+                                        <i class="bi bi-star" style="color: #ffc107; font-size: 0.8rem;"></i>
+                                    {% endif %}
+                                {% endfor %}
+                                <span class="ms-2 text-muted small">{{ produit.note_moyenne|floatformat:1 }} ({{ produit.nombre_avis }})</span>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <p class="card-text flex-grow-1 mb-4" style="color: var(--couleur-marron); opacity: 0.8;">
+                            {{ produit.description|truncatewords:20 }}
+                        </p>
+
+                        <!-- Message d'incitation au clic -->
+                        <div class="mt-auto text-center">
+                            <small class="text-muted">
+                                <i class="bi bi-cursor-fill me-1"></i>
+                                Cliquez pour voir les détails et commander
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="card card-custom">
+                <div class="card-body text-center py-5 bg-accent">
+                    <i class="bi bi-box-seam" style="font-size: 5rem; color: var(--couleur-vert-fonce); opacity: 0.5;"></i>
+                    <h4 class="mt-4 mb-3" style="color: var(--couleur-marron);">Aucun produit dans cette catégorie</h4>
+                    <p class="mb-4" style="color: var(--couleur-marron); opacity: 0.8;">
+                        Il n'y a actuellement aucun produit disponible dans la catégorie "{{ categorie.nom }}".
+                    </p>
+                    <div class="d-flex gap-3 justify-content-center">
+                        <a href="{% url 'boutique:liste_produits' %}" class="btn btn-primary-custom">
+                            <i class="bi bi-grid me-2"></i>Voir tous les produits
+                        </a>
+                        <a href="{% url 'boutique:accueil' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-house me-2"></i>Retour à l'accueil
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Autres catégories -->
+    {% if produits %}
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card card-custom text-center p-4 bg-accent">
+                <h3 class="fw-bold mb-3" style="color: var(--couleur-marron);">
+                    Explorez d'autres catégories
+                </h3>
+                <div class="d-flex flex-wrap gap-2 justify-content-center">
+                    {% for autre_categorie in categories %}
+                        {% if autre_categorie != categorie %}
+                            <a href="{% url 'boutique:produits_par_categorie' autre_categorie.pk %}"
+                               class="btn btn-outline-secondary btn-sm"
+                               style="border-color: var(--couleur-vert-fonce); color: var(--couleur-vert-fonce);">
+                                <i class="bi bi-tag me-1"></i>{{ autre_categorie.nom }}
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Section informative -->
+    {% if not user.is_authenticated and produits %}
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card card-custom text-center p-4 bg-accent">
+                <h3 class="fw-bold mb-3" style="color: var(--couleur-marron);">
+                    <i class="bi bi-info-circle me-2"></i>Créez votre compte
+                </h3>
+                <p class="mb-4" style="color: var(--couleur-marron);">
+                    Connectez-vous pour ajouter des produits à votre panier et profiter d'offres exclusives !
+                </p>
+                <div class="d-flex gap-3 justify-content-center">
+                    <a href="{% url 'boutique:connexion' %}" class="btn btn-secondary-custom">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>Se connecter
+                    </a>
+                    <a href="{% url 'boutique:inscription' %}" class="btn btn-primary-custom">
+                        <i class="bi bi-person-plus me-2"></i>Créer un compte
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.category-image {
+    filter: drop-shadow(0 10px 20px rgba(139, 69, 19, 0.2));
+    border-radius: 15px;
+}
+
+.hover-overlay {
+    transition: opacity 0.3s ease;
+}
+
+.product-card-clickable:hover .hover-overlay {
+    opacity: 1 !important;
+}
+
+.product-card-clickable {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.product-card-clickable:hover {
+    transform: translateY(-5px);
+}
+
+/* Animation d'entrée */
+.animate-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s ease-out;
+}
+
+.animate-on-scroll.animate {
+    opacity: 1;
+    transform: translateY(0);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animation d'entrée des produits
+    const products = document.querySelectorAll('.animate-on-scroll');
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animate');
+            }
+        });
+    }, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    });
+
+    products.forEach(product => {
+        observer.observe(product);
+    });
+
+    console.log('✅ Page catégorie initialisée - Navigation par clic uniquement');
+});
+</script>
+{% endblock %}

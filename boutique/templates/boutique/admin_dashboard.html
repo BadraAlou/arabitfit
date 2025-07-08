@@ -1,0 +1,880 @@
+{% extends 'base.html' %}
+
+{% block titre %}Tableau de Bord Administrateur - ArabiFit{% endblock %}
+
+{% block contenu %}
+<div class="admin-dashboard">
+    <!-- En-tête moderne avec gradient -->
+    <div class="dashboard-header">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <div class="header-content">
+                        <h1 class="dashboard-title">
+                            <i class="bi bi-speedometer2 me-3"></i>
+                            Tableau de Bord Administrateur
+                        </h1>
+                        <p class="dashboard-subtitle">
+                            Bienvenue {{ user.get_full_name|default:user.username }} •
+                            <span class="current-time" id="current-time"></span>
+                        </p>
+                    </div>
+                </div>
+                <div class="col-lg-4 text-end">
+                    <div class="header-actions">
+                        <a href="{% url 'boutique:accueil' %}" class="btn btn-outline-light me-2">
+                            <i class="bi bi-house me-2"></i>Retour au site
+                        </a>
+                        <a href="{% url 'admin:index' %}" class="btn btn-light">
+                            <i class="bi bi-gear me-2"></i>Admin Django
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid py-4">
+        <!-- Statistiques principales avec animations -->
+        <div class="row g-4 mb-5">
+            <!-- Commandes -->
+            <div class="col-xl-3 col-md-6">
+                <div class="stats-card stats-card-success" data-aos="fade-up" data-aos-delay="100">
+                    <div class="stats-icon">
+                        <i class="bi bi-bag-check"></i>
+                    </div>
+                    <div class="stats-content">
+                        <div class="stats-number" data-count="{{ stats_commandes.total_commandes }}">0</div>
+                        <div class="stats-label">Total Commandes</div>
+                        <div class="stats-trend">
+                            <i class="bi bi-arrow-up"></i>
+                            <span>{{ stats_commandes.commandes_aujourd_hui }} aujourd'hui</span>
+                        </div>
+                    </div>
+                    <div class="stats-progress">
+                        <div class="progress-bar" style="width: 85%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Revenus -->
+            <div class="col-xl-3 col-md-6">
+                <div class="stats-card stats-card-warning" data-aos="fade-up" data-aos-delay="200">
+                    <div class="stats-icon">
+                        <i class="bi bi-currency-exchange"></i>
+                    </div>
+                    <div class="stats-content">
+                        <div class="stats-number" data-count="{{ stats_commandes.revenus_total|floatformat:0 }}">0</div>
+                        <div class="stats-label">Revenus Total (XOF)</div>
+                        <div class="stats-trend">
+                            <i class="bi bi-arrow-up"></i>
+                            <span>{{ stats_commandes.revenus_aujourd_hui|floatformat:0 }} XOF aujourd'hui</span>
+                        </div>
+                    </div>
+                    <div class="stats-progress">
+                        <div class="progress-bar" style="width: 72%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Employés -->
+            <div class="col-xl-3 col-md-6">
+                <div class="stats-card stats-card-info" data-aos="fade-up" data-aos-delay="300">
+                    <div class="stats-icon">
+                        <i class="bi bi-people"></i>
+                    </div>
+                    <div class="stats-content">
+                        <div class="stats-number" data-count="{{ stats_rh.total_employes }}">0</div>
+                        <div class="stats-label">Employés Actifs</div>
+                        <div class="stats-trend">
+                            <i class="bi bi-person-check"></i>
+                            <span>{{ stats_rh.employes_presents_aujourd_hui }} présents</span>
+                        </div>
+                    </div>
+                    <div class="stats-progress">
+                        <div class="progress-bar" style="width: 90%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Congés -->
+            <div class="col-xl-3 col-md-6">
+                <div class="stats-card stats-card-danger" data-aos="fade-up" data-aos-delay="400">
+                    <div class="stats-icon">
+                        <i class="bi bi-calendar-x"></i>
+                    </div>
+                    <div class="stats-content">
+                        <div class="stats-number" data-count="{{ stats_rh.conges_en_attente }}">0</div>
+                        <div class="stats-label">Congés en Attente</div>
+                        <div class="stats-trend">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            <span>{{ stats_rh.employes_en_conge }} en congé</span>
+                        </div>
+                    </div>
+                    <div class="stats-progress">
+                        <div class="progress-bar" style="width: 45%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions rapides avec design moderne -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="modern-card" data-aos="fade-up">
+                    <div class="card-header">
+                        <h5 class="card-title">
+                            <i class="bi bi-lightning me-2"></i>Actions Rapides
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-4">
+                            <div class="col-lg-3 col-md-6">
+                                <a href="{% url 'boutique:admin_commandes' %}" class="action-card action-card-primary">
+                                    <div class="action-icon">
+                                        <i class="bi bi-bag-check"></i>
+                                    </div>
+                                    <div class="action-content">
+                                        <h6>Gérer les Commandes</h6>
+                                        <p>{{ stats_commandes.commandes_en_attente }} en attente</p>
+                                    </div>
+                                    <div class="action-arrow">
+                                        <i class="bi bi-arrow-right"></i>
+                                    </div>
+                                </a>
+                            </div>
+
+                            <div class="col-lg-3 col-md-6">
+                                <a href="{% url 'boutique:admin_rh' %}" class="action-card action-card-success">
+                                    <div class="action-icon">
+                                        <i class="bi bi-people"></i>
+                                    </div>
+                                    <div class="action-content">
+                                        <h6>Ressources Humaines</h6>
+                                        <p>{{ stats_rh.conges_en_attente }} demandes</p>
+                                    </div>
+                                    <div class="action-arrow">
+                                        <i class="bi bi-arrow-right"></i>
+                                    </div>
+                                </a>
+                            </div>
+
+                            <div class="col-lg-3 col-md-6">
+                                <a href="{% url 'admin:boutique_produit_changelist' %}" class="action-card action-card-warning">
+                                    <div class="action-icon">
+                                        <i class="bi bi-box-seam"></i>
+                                    </div>
+                                    <div class="action-content">
+                                        <h6>Gérer les Produits</h6>
+                                        <p>Stock et catalogue</p>
+                                    </div>
+                                    <div class="action-arrow">
+                                        <i class="bi bi-arrow-right"></i>
+                                    </div>
+                                </a>
+                            </div>
+
+                            <div class="col-lg-3 col-md-6">
+                                <a href="{% url 'admin:boutique_avisproduit_changelist' %}" class="action-card action-card-info">
+                                    <div class="action-icon">
+                                        <i class="bi bi-star"></i>
+                                    </div>
+                                    <div class="action-content">
+                                        <h6>Modérer les Avis</h6>
+                                        <p>Avis clients</p>
+                                    </div>
+                                    <div class="action-arrow">
+                                        <i class="bi bi-arrow-right"></i>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Commandes récentes avec design amélioré -->
+            <div class="col-lg-8">
+                <div class="modern-card" data-aos="fade-right">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title">
+                                <i class="bi bi-clock-history me-2"></i>Commandes Récentes
+                            </h5>
+                            <a href="{% url 'boutique:admin_commandes' %}" class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-eye me-1"></i>Voir tout
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        {% for commande in commandes_recentes %}
+                        <div class="order-item">
+                            <div class="order-info">
+                                <div class="order-number">{{ commande.numero }}</div>
+                                <div class="order-date">{{ commande.date_creation|date:"d/m/Y H:i" }}</div>
+                            </div>
+                            <div class="order-customer">
+                                <div class="customer-name">{{ commande.utilisateur.get_full_name|default:commande.utilisateur.username }}</div>
+                                <div class="customer-email">{{ commande.email }}</div>
+                            </div>
+                            <div class="order-amount">
+                                <span class="amount">{{ commande.total|floatformat:0 }} XOF</span>
+                            </div>
+                            <div class="order-status">
+                                {% if commande.statut == 'en_attente' %}
+                                    <span class="status-badge status-warning">En attente</span>
+                                {% elif commande.statut == 'confirmee' %}
+                                    <span class="status-badge status-success">Confirmée</span>
+                                {% elif commande.statut == 'expediee' %}
+                                    <span class="status-badge status-info">Expédiée</span>
+                                {% elif commande.statut == 'livree' %}
+                                    <span class="status-badge status-primary">Livrée</span>
+                                {% endif %}
+                            </div>
+                            <div class="order-actions">
+                                <a href="{% url 'boutique:admin_modifier_commande' commande.numero %}" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="empty-state">
+                            <i class="bi bi-inbox"></i>
+                            <p>Aucune commande récente</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Congés en attente avec design moderne -->
+            <div class="col-lg-4">
+                <div class="modern-card" data-aos="fade-left">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title">
+                                <i class="bi bi-calendar-check me-2"></i>Congés en Attente
+                            </h5>
+                            <a href="{% url 'boutique:admin_rh' %}" class="btn btn-outline-success btn-sm">
+                                <i class="bi bi-eye me-1"></i>Voir tout
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        {% for conge in conges_en_attente %}
+                        <div class="leave-item">
+                            <div class="employee-avatar">
+                                {% if conge.employe.photo %}
+                                    <img src="{{ conge.employe.photo.url }}" alt="{{ conge.employe.user.get_full_name }}">
+                                {% else %}
+                                    <div class="avatar-placeholder">
+                                        <i class="bi bi-person"></i>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="leave-info">
+                                <div class="employee-name">{{ conge.employe.user.get_full_name }}</div>
+                                <div class="leave-type">{{ conge.get_type_conge_display }}</div>
+                                <div class="leave-dates">{{ conge.date_debut|date:"d/m" }} - {{ conge.date_fin|date:"d/m" }}</div>
+                            </div>
+                            <div class="leave-actions">
+                                <a href="{% url 'boutique:admin_approuver_conge' conge.id %}" class="btn btn-sm btn-warning">
+                                    <i class="bi bi-check-circle"></i>
+                                </a>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="empty-state">
+                            <i class="bi bi-check-circle"></i>
+                            <p>Aucun congé en attente</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Variables CSS pour la cohérence */
+:root {
+    --admin-primary: #667eea;
+    --admin-success: #28a745;
+    --admin-warning: #ffc107;
+    --admin-danger: #dc3545;
+    --admin-info: #17a2b8;
+    --admin-dark: #343a40;
+    --admin-light: #f8f9fa;
+    --admin-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+    --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+    --border-radius: 12px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dashboard général */
+.admin-dashboard {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+/* En-tête du dashboard */
+.dashboard-header {
+    background: var(--admin-gradient);
+    color: white;
+    padding: 2rem 0;
+    margin-bottom: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.dashboard-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    opacity: 0.3;
+}
+
+.header-content {
+    position: relative;
+    z-index: 2;
+}
+
+.dashboard-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.dashboard-subtitle {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin-bottom: 0;
+}
+
+.header-actions {
+    position: relative;
+    z-index: 2;
+}
+
+/* Cartes de statistiques */
+.stats-card {
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    box-shadow: var(--shadow-md);
+    border: none;
+    position: relative;
+    overflow: hidden;
+    transition: var(--transition);
+    height: 100%;
+}
+
+.stats-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+.stats-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--admin-primary);
+}
+
+.stats-card-success::before { background: var(--admin-success); }
+.stats-card-warning::before { background: var(--admin-warning); }
+.stats-card-info::before { background: var(--admin-info); }
+.stats-card-danger::before { background: var(--admin-danger); }
+
+.stats-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(135deg, var(--admin-primary), rgba(102, 126, 234, 0.8));
+    color: white;
+    font-size: 1.5rem;
+}
+
+.stats-card-success .stats-icon { background: linear-gradient(135deg, var(--admin-success), rgba(40, 167, 69, 0.8)); }
+.stats-card-warning .stats-icon { background: linear-gradient(135deg, var(--admin-warning), rgba(255, 193, 7, 0.8)); }
+.stats-card-info .stats-icon { background: linear-gradient(135deg, var(--admin-info), rgba(23, 162, 184, 0.8)); }
+.stats-card-danger .stats-icon { background: linear-gradient(135deg, var(--admin-danger), rgba(220, 53, 69, 0.8)); }
+
+.stats-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--admin-dark);
+    margin-bottom: 0.5rem;
+}
+
+.stats-label {
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.stats-trend {
+    display: flex;
+    align-items: center;
+    font-size: 0.85rem;
+    color: var(--admin-success);
+    font-weight: 500;
+}
+
+.stats-trend i {
+    margin-right: 0.5rem;
+}
+
+.stats-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: rgba(0,0,0,0.1);
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--admin-primary), rgba(102, 126, 234, 0.8));
+    transition: width 2s ease-in-out;
+}
+
+/* Cartes modernes */
+.modern-card {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
+    border: none;
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.modern-card:hover {
+    box-shadow: var(--shadow-lg);
+}
+
+.modern-card .card-header {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    padding: 1.5rem 2rem;
+}
+
+.modern-card .card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--admin-dark);
+    margin-bottom: 0;
+}
+
+.modern-card .card-body {
+    padding: 2rem;
+}
+
+/* Cartes d'action */
+.action-card {
+    display: flex;
+    align-items: center;
+    padding: 1.5rem;
+    background: white;
+    border-radius: var(--border-radius);
+    text-decoration: none;
+    color: inherit;
+    box-shadow: var(--shadow-sm);
+    border: 2px solid transparent;
+    transition: var(--transition);
+    height: 100%;
+}
+
+.action-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    text-decoration: none;
+    color: inherit;
+}
+
+.action-card-primary:hover { border-color: var(--admin-primary); }
+.action-card-success:hover { border-color: var(--admin-success); }
+.action-card-warning:hover { border-color: var(--admin-warning); }
+.action-card-info:hover { border-color: var(--admin-info); }
+
+.action-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    font-size: 1.25rem;
+    color: white;
+    flex-shrink: 0;
+}
+
+.action-card-primary .action-icon { background: var(--admin-primary); }
+.action-card-success .action-icon { background: var(--admin-success); }
+.action-card-warning .action-icon { background: var(--admin-warning); }
+.action-card-info .action-icon { background: var(--admin-info); }
+
+.action-content {
+    flex-grow: 1;
+}
+
+.action-content h6 {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: var(--admin-dark);
+}
+
+.action-content p {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-bottom: 0;
+}
+
+.action-arrow {
+    color: #6c757d;
+    font-size: 1.25rem;
+    transition: var(--transition);
+}
+
+.action-card:hover .action-arrow {
+    transform: translateX(5px);
+    color: var(--admin-primary);
+}
+
+/* Items de commande */
+.order-item {
+    display: flex;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    transition: var(--transition);
+}
+
+.order-item:hover {
+    background: rgba(102, 126, 234, 0.05);
+}
+
+.order-item:last-child {
+    border-bottom: none;
+}
+
+.order-info {
+    min-width: 150px;
+}
+
+.order-number {
+    font-weight: 600;
+    color: var(--admin-dark);
+    font-size: 0.9rem;
+}
+
+.order-date {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+.order-customer {
+    flex-grow: 1;
+    margin: 0 1rem;
+}
+
+.customer-name {
+    font-weight: 500;
+    color: var(--admin-dark);
+    font-size: 0.9rem;
+}
+
+.customer-email {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+.order-amount {
+    min-width: 120px;
+    text-align: right;
+}
+
+.amount {
+    font-weight: 600;
+    color: var(--admin-success);
+    font-size: 0.9rem;
+}
+
+.order-status {
+    min-width: 100px;
+    text-align: center;
+}
+
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-warning { background: rgba(255, 193, 7, 0.2); color: #856404; }
+.status-success { background: rgba(40, 167, 69, 0.2); color: #155724; }
+.status-info { background: rgba(23, 162, 184, 0.2); color: #0c5460; }
+.status-primary { background: rgba(102, 126, 234, 0.2); color: #4c63d2; }
+
+.order-actions {
+    min-width: 60px;
+    text-align: right;
+}
+
+/* Items de congé */
+.leave-item {
+    display: flex;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    transition: var(--transition);
+}
+
+.leave-item:hover {
+    background: rgba(40, 167, 69, 0.05);
+}
+
+.leave-item:last-child {
+    border-bottom: none;
+}
+
+.employee-avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    margin-right: 1rem;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.employee-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatar-placeholder {
+    width: 100%;
+    height: 100%;
+    background: var(--admin-gradient);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.25rem;
+}
+
+.leave-info {
+    flex-grow: 1;
+}
+
+.employee-name {
+    font-weight: 600;
+    color: var(--admin-dark);
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+}
+
+.leave-type {
+    font-size: 0.8rem;
+    color: var(--admin-info);
+    margin-bottom: 0.25rem;
+}
+
+.leave-dates {
+    font-size: 0.75rem;
+    color: #6c757d;
+}
+
+.leave-actions {
+    min-width: 60px;
+    text-align: right;
+}
+
+/* État vide */
+.empty-state {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: #6c757d;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.empty-state p {
+    margin-bottom: 0;
+    font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .dashboard-title {
+        font-size: 2rem;
+    }
+
+    .stats-card {
+        padding: 1.5rem;
+    }
+
+    .modern-card .card-header,
+    .modern-card .card-body {
+        padding: 1.5rem;
+    }
+
+    .order-item,
+    .leave-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .order-info,
+    .order-customer,
+    .order-amount,
+    .order-status,
+    .order-actions {
+        min-width: auto;
+        width: 100%;
+        text-align: left;
+    }
+
+    .action-card {
+        padding: 1rem;
+    }
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.stats-card {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+/* Animation des compteurs */
+@keyframes countUp {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.stats-number {
+    animation: countUp 0.8s ease-out;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animation des compteurs
+    function animateCounters() {
+        const counters = document.querySelectorAll('[data-count]');
+
+        counters.forEach(counter => {
+            const target = parseInt(counter.getAttribute('data-count'));
+            const duration = 2000; // 2 secondes
+            const step = target / (duration / 16); // 60 FPS
+            let current = 0;
+
+            const timer = setInterval(() => {
+                current += step;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                counter.textContent = Math.floor(current).toLocaleString();
+            }, 16);
+        });
+    }
+
+    // Démarrer l'animation après un court délai
+    setTimeout(animateCounters, 500);
+
+    // Horloge en temps réel
+    function updateTime() {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString('fr-FR', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        });
+        const dateString = now.toLocaleDateString('fr-FR', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+
+        const timeElement = document.getElementById('current-time');
+        if (timeElement) {
+            timeElement.textContent = `${dateString} ${timeString}`;
+        }
+    }
+
+    // Mettre à jour l'heure toutes les secondes
+    updateTime();
+    setInterval(updateTime, 1000);
+
+    // Animation des barres de progression
+    function animateProgressBars() {
+        const progressBars = document.querySelectorAll('.progress-bar');
+
+        progressBars.forEach(bar => {
+            const width = bar.style.width;
+            bar.style.width = '0%';
+
+            setTimeout(() => {
+                bar.style.width = width;
+            }, 1000);
+        });
+    }
+
+    animateProgressBars();
+
+    // Effet de survol pour les cartes
+    const cards = document.querySelectorAll('.stats-card, .action-card, .modern-card');
+
+    cards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px)';
+        });
+
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+});
+</script>
+{% endblock %}

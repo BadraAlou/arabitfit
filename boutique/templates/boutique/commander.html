@@ -1,0 +1,271 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block titre %}Passer commande - ArabiFit{% endblock %}
+
+{% block contenu %}
+<div class="container-fluid py-4">
+    <!-- En-tête -->
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h1 class="display-5 fw-bold mb-2" style="color: var(--couleur-marron);">Finaliser ma commande</h1>
+            <p class="text-muted">Renseignez vos informations de livraison et choisissez votre mode de paiement</p>
+        </div>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="row g-4">
+            <!-- Formulaire de commande -->
+            <div class="col-xl-8 col-lg-7">
+                <!-- Informations personnelles -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white border-0 py-4">
+                        <h5 class="mb-0 fw-bold" style="color: var(--couleur-marron);">
+                            <i class="bi bi-person me-2"></i>Informations personnelles
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Nom complet *</label>
+                                {{ form.nom_complet }}
+                                {% if form.nom_complet.errors %}
+                                    <div class="text-danger small mt-1">{{ form.nom_complet.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Email *</label>
+                                {{ form.email }}
+                                {% if form.email.errors %}
+                                    <div class="text-danger small mt-1">{{ form.email.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Téléphone *</label>
+                                {{ form.telephone }}
+                                {% if form.telephone.errors %}
+                                    <div class="text-danger small mt-1">{{ form.telephone.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Adresse de livraison -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white border-0 py-4">
+                        <h5 class="mb-0 fw-bold" style="color: var(--couleur-marron);">
+                            <i class="bi bi-geo-alt me-2"></i>Adresse de livraison
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Adresse complète *</label>
+                                {{ form.adresse }}
+                                {% if form.adresse.errors %}
+                                    <div class="text-danger small mt-1">{{ form.adresse.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-8">
+                                <label class="form-label fw-semibold">Ville *</label>
+                                {{ form.ville }}
+                                {% if form.ville.errors %}
+                                    <div class="text-danger small mt-1">{{ form.ville.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Code postal</label>
+                                {{ form.code_postal }}
+                                {% if form.code_postal.errors %}
+                                    <div class="text-danger small mt-1">{{ form.code_postal.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Méthode de paiement -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white border-0 py-4">
+                        <h5 class="mb-0 fw-bold" style="color: var(--couleur-marron);">
+                            <i class="bi bi-credit-card me-2"></i>Mode de paiement
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-check payment-option">
+                                    <input class="form-check-input" type="radio" name="methode_paiement" value="stripe" id="stripe">
+                                    <label class="form-check-label w-100" for="stripe">
+                                        <div class="card h-100 border-2">
+                                            <div class="card-body text-center p-3">
+                                                <div class="mb-2">
+                                                    <i class="bi bi-credit-card" style="font-size: 2rem; color: #635bff;"></i>
+                                                </div>
+                                                <h6 class="fw-bold mb-1">Carte bancaire</h6>
+                                                <small class="text-muted">Visa, Mastercard</small>
+                                            </div>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check payment-option">
+                                    <input class="form-check-input" type="radio" name="methode_paiement" value="cinetpay" id="cinetpay">
+                                    <label class="form-check-label w-100" for="cinetpay">
+                                        <div class="card h-100 border-2">
+                                            <div class="card-body text-center p-3">
+                                                <div class="mb-2">
+                                                    <i class="bi bi-phone" style="font-size: 2rem; color: #00b894;"></i>
+                                                </div>
+                                                <h6 class="fw-bold mb-1">Mobile Money</h6>
+                                                <small class="text-muted">Orange, Moov</small>
+                                            </div>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        {% if form.methode_paiement.errors %}
+                            <div class="text-danger small mt-2">{{ form.methode_paiement.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Boutons d'action -->
+                <div class="d-flex gap-3 justify-content-between">
+                    <a href="{% url 'boutique:voir_panier' %}" class="btn btn-outline-secondary btn-lg">
+                        <i class="bi bi-arrow-left me-2"></i>Retour au panier
+                    </a>
+                    <button type="submit" class="btn btn-primary-custom btn-lg">
+                        Confirmer la commande
+                        <i class="bi bi-arrow-right ms-2"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Résumé de commande -->
+            <div class="col-xl-4 col-lg-5">
+                <div class="sticky-top" style="top: 100px;">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-white border-0 py-4">
+                            <h5 class="mb-0 fw-bold text-center" style="color: var(--couleur-marron);">
+                                Récapitulatif
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <!-- Articles -->
+                            <div class="mb-4">
+                                <h6 class="fw-semibold mb-3">Articles commandés</h6>
+                                {% for item in panier.items.all %}
+                                <div class="d-flex align-items-center mb-3 p-2 rounded" style="background: rgba(255, 182, 193, 0.1);">
+                                    <img src="{{ item.produit.image.url }}" alt="{{ item.produit.nom }}"
+                                         class="rounded me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                                    <div class="flex-grow-1">
+                                        <div class="fw-semibold small">{{ item.produit.nom }}</div>
+                                        <small class="text-muted">{{ item.quantite }} × {{ item.produit.prix|floatformat:0 }} XOF</small>
+                                    </div>
+                                    <span class="fw-semibold">{{ item.total|floatformat:0 }} XOF</span>
+                                </div>
+                                {% endfor %}
+                            </div>
+
+                            <hr>
+
+                            <!-- Calculs -->
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Sous-total</span>
+                                <span>{{ panier.total|floatformat:0 }} XOF</span>
+                            </div>
+
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Livraison</span>
+                                <span class="text-success">Gratuite</span>
+                            </div>
+
+                            <div class="d-flex justify-content-between mb-4">
+                                <span>TVA (18%)</span>
+                                <span>Incluse</span>
+                            </div>
+
+                            <hr>
+
+                            <div class="d-flex justify-content-between mb-4 p-3 rounded"
+                                 style="background: linear-gradient(135deg, rgba(255, 182, 193, 0.2), rgba(255, 192, 203, 0.1));">
+                                <span class="fw-bold fs-5">Total</span>
+                                <span class="fw-bold fs-4" style="color: var(--couleur-rose-fonce);">
+                                    {{ panier.total|floatformat:0 }} XOF
+                                </span>
+                            </div>
+
+                            <!-- Informations de sécurité -->
+                            <div class="text-center">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <i class="bi bi-shield-check text-success mb-1" style="font-size: 1.2rem;"></i>
+                                        <small class="d-block">Sécurisé</small>
+                                    </div>
+                                    <div class="col-4">
+                                        <i class="bi bi-truck text-primary mb-1" style="font-size: 1.2rem;"></i>
+                                        <small class="d-block">Livraison 3-5j</small>
+                                    </div>
+                                    <div class="col-4">
+                                        <i class="bi bi-arrow-clockwise text-info mb-1" style="font-size: 1.2rem;"></i>
+                                        <small class="d-block">Retour 30j</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<style>
+.payment-option .form-check-input {
+    display: none;
+}
+
+.payment-option .card {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-color: #dee2e6 !important;
+}
+
+.payment-option .card:hover {
+    border-color: var(--couleur-rose-fonce) !important;
+    transform: translateY(-2px);
+}
+
+.payment-option input:checked + label .card {
+    border-color: var(--couleur-rose-fonce) !important;
+    background: rgba(255, 182, 193, 0.1);
+    transform: translateY(-2px);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Gestion de la sélection des méthodes de paiement
+    const paymentOptions = document.querySelectorAll('.payment-option input[type="radio"]');
+
+    paymentOptions.forEach(option => {
+        option.addEventListener('change', function() {
+            // Retirer la classe active de toutes les cartes
+            document.querySelectorAll('.payment-option .card').forEach(card => {
+                card.classList.remove('active');
+            });
+
+            // Ajouter la classe active à la carte sélectionnée
+            if (this.checked) {
+                this.nextElementSibling.querySelector('.card').classList.add('active');
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

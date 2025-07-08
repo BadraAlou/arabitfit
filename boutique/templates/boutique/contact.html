@@ -1,0 +1,358 @@
+{% extends 'base.html' %}
+
+{% block titre %}Contact - Biodetox Mali{% endblock %}
+
+{% block contenu %}
+<div class="container my-5">
+    <!-- En-tête avec fond naturel -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card card-custom text-center p-5 bg-accent">
+                <h1 class="display-5 fw-bold mb-4" style="color: var(--couleur-marron);">
+                    <i class="bi bi-envelope me-3" style="color: var(--couleur-vert-fonce);"></i>Contactez-nous
+                </h1>
+                <p class="lead" style="color: var(--couleur-marron);">Nous sommes là pour vous accompagner dans votre parcours détox</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-5">
+        <!-- Formulaire de contact -->
+        <div class="col-lg-8">
+            <div class="card card-custom">
+                <div class="card-header bg-white border-0 py-4">
+                    <h3 class="mb-0 fw-bold" style="color: var(--couleur-marron);">
+                        <i class="bi bi-chat-dots me-2"></i>Envoyez-nous un message
+                    </h3>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold" style="color: var(--couleur-marron);">
+                                    <i class="bi bi-person me-2" style="color: var(--couleur-vert-fonce);"></i>Prénom
+                                </label>
+                                <input type="text" name="prenom" class="form-control" placeholder="Votre prénom" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold" style="color: var(--couleur-marron);">
+                                    <i class="bi bi-person-badge me-2" style="color: var(--couleur-vert-fonce);"></i>Nom
+                                </label>
+                                <input type="text" name="nom" class="form-control" placeholder="Votre nom" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold" style="color: var(--couleur-marron);">
+                                    <i class="bi bi-envelope me-2" style="color: var(--couleur-vert-fonce);"></i>Email
+                                </label>
+                                <input type="email" name="email" class="form-control" placeholder="votre@email.com" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold" style="color: var(--couleur-marron);">
+                                    <i class="bi bi-telephone me-2" style="color: var(--couleur-vert-fonce);"></i>Téléphone
+                                </label>
+                                <input type="tel" name="telephone" class="form-control" placeholder="+223 XX XX XX XX">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold" style="color: var(--couleur-marron);">
+                                    <i class="bi bi-tag me-2" style="color: var(--couleur-vert-fonce);"></i>Sujet
+                                </label>
+                                <select name="sujet" class="form-select" required>
+                                    <option value="">Choisissez un sujet</option>
+                                    <option value="produits">Questions sur les produits</option>
+                                    <option value="commande">Suivi de commande</option>
+                                    <option value="livraison">Livraison</option>
+                                    <option value="retour">Retour/Échange</option>
+                                    <option value="autre">Autre</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold" style="color: var(--couleur-marron);">
+                                    <i class="bi bi-chat-text me-2" style="color: var(--couleur-vert-fonce);"></i>Message
+                                </label>
+                                <textarea name="message" class="form-control" rows="6" placeholder="Décrivez votre demande en détail..." required></textarea>
+                            </div>
+                        </div>
+
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-primary-custom btn-lg">
+                                <i class="bi bi-send me-2"></i>Envoyer le message
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Informations de contact -->
+        <div class="col-lg-4">
+            <div class="sticky-top" style="top: 100px;">
+                <!-- Coordonnées -->
+                <div class="card card-custom mb-4">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-4" style="color: var(--couleur-marron);">
+                            <i class="bi bi-geo-alt me-2"></i>Nos coordonnées
+                        </h5>
+
+                        <div class="mb-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center me-3"
+                                     style="width: 50px; height: 50px; background: var(--couleur-gradient-vert);">
+                                    <i class="bi bi-geo-alt text-white" style="font-size: 1.2rem;"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold mb-1">Adresse</h6>
+                                    <small class="text-muted">Bamako, Mali<br>Quartier ACI 2000</small>
+                                </div>
+                            </div>
+
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center me-3"
+                                     style="width: 50px; height: 50px; background: var(--couleur-gradient-principal);">
+                                    <i class="bi bi-telephone text-white" style="font-size: 1.2rem;"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold mb-1">Téléphones</h6>
+                                    <small class="text-muted">
+                                        <a href="tel:+22383691115" class="text-decoration-none">+223 83 69 11 15</a><br>
+                                        <a href="tel:+22372471935" class="text-decoration-none">+223 72 47 19 35</a>
+                                    </small>
+                                </div>
+                            </div>
+
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center me-3"
+                                     style="width: 50px; height: 50px; background: var(--couleur-gradient-vert);">
+                                    <i class="bi bi-envelope text-white" style="font-size: 1.2rem;"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold mb-1">Email</h6>
+                                    <small class="text-muted">
+                                        <a href="mailto:contact@biodetoxmali.com" class="text-decoration-none">contact@biodetoxmali.com</a>
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Horaires -->
+                <div class="card card-custom mb-4">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-4" style="color: var(--couleur-marron);">
+                            <i class="bi bi-clock me-2"></i>Horaires d'ouverture
+                        </h5>
+
+                        <div class="mb-2 d-flex justify-content-between">
+                            <span>Lundi - Vendredi</span>
+                            <span class="fw-semibold">8h - 18h</span>
+                        </div>
+                        <div class="mb-2 d-flex justify-content-between">
+                            <span>Samedi</span>
+                            <span class="fw-semibold">9h - 16h</span>
+                        </div>
+                        <div class="mb-2 d-flex justify-content-between">
+                            <span>Dimanche</span>
+                            <span class="text-muted">Fermé</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Réseaux sociaux -->
+                <div class="card card-custom">
+                    <div class="card-body p-4 text-center">
+                        <h5 class="fw-bold mb-4" style="color: var(--couleur-marron);">
+                            <i class="bi bi-share me-2"></i>Suivez-nous
+                        </h5>
+
+                        <div class="d-flex justify-content-center gap-3">
+                            <a href="https://wa.me/22367482123" target="_blank" class="btn btn-outline-success rounded-circle" style="width: 50px; height: 50px;">
+                                <i class="bi bi-whatsapp"></i>
+                            </a>
+                            <a href="#" class="btn btn-outline-primary rounded-circle" style="width: 50px; height: 50px;">
+                                <i class="bi bi-facebook"></i>
+                            </a>
+                            <a href="#" class="btn btn-outline-danger rounded-circle" style="width: 50px; height: 50px;">
+                                <i class="bi bi-instagram"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Carte de localisation -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card card-custom">
+                <div class="card-header bg-white border-0 py-4">
+                    <h3 class="mb-0 fw-bold text-center" style="color: var(--couleur-marron);">
+                        <i class="bi bi-geo-alt me-2"></i>Notre localisation
+                    </h3>
+                </div>
+                <div class="card-body p-0">
+                    <div id="map" style="height: 400px; width: 100%;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ Section -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card card-custom">
+                <div class="card-header bg-white border-0 py-4">
+                    <h3 class="mb-0 fw-bold text-center" style="color: var(--couleur-marron);">
+                        <i class="bi bi-question-circle me-2"></i>Questions fréquentes
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="accordion" id="faqAccordion">
+                        <div class="accordion-item border-0 mb-3">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                    Comment passer une commande ?
+                                </button>
+                            </h2>
+                            <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Créez un compte, ajoutez vos produits au panier, puis suivez les étapes de commande. Vous pouvez payer par carte bancaire ou Mobile Money.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item border-0 mb-3">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                    Quels sont les délais de livraison ?
+                                </button>
+                            </h2>
+                            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    La livraison prend généralement 3 à 5 jours ouvrables à Bamako et 5 à 7 jours dans les autres régions du Mali.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item border-0 mb-3">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                    Les produits Arabigum sont-ils vraiment naturels ?
+                                </button>
+                            </h2>
+                            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Oui, tous nos produits Arabigum sont 100% naturels, sans additifs chimiques, et certifiés pour votre sécurité.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Script pour la carte -->
+<script>
+function initMap() {
+    // Coordonnées de Bamako, Mali (ACI 2000)
+    const bamako = { lat: 12.6392, lng: -8.0029 };
+
+    const map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 15,
+        center: bamako,
+        styles: [
+            {
+                "featureType": "all",
+                "elementType": "geometry.fill",
+                "stylers": [{"color": "#f5f5dc"}]
+            },
+            {
+                "featureType": "water",
+                "elementType": "geometry.fill",
+                "stylers": [{"color": "#98fb98"}]
+            }
+        ]
+    });
+
+    // Marqueur personnalisé Biodetox Mali
+    const marker = new google.maps.Marker({
+        position: bamako,
+        map: map,
+        title: "Biodetox Mali - ACI 2000, Bamako",
+        icon: {
+            url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
+                    <circle cx="20" cy="20" r="18" fill="#98FB98" stroke="#8B4513" stroke-width="2"/>
+                    <circle cx="20" cy="20" r="8" fill="#8B4513"/>
+                    <text x="20" y="25" text-anchor="middle" fill="white" font-size="10" font-weight="bold">BM</text>
+                </svg>
+            `),
+            scaledSize: new google.maps.Size(40, 40)
+        }
+    });
+
+    // Fenêtre d'information
+    const infoWindow = new google.maps.InfoWindow({
+        content: `
+            <div style="padding: 10px; font-family: 'Poppins', sans-serif;">
+                <h6 style="color: #8B4513; margin-bottom: 8px; font-weight: bold;">
+                    🌿 Biodetox Mali
+                </h6>
+                <p style="margin: 5px 0; color: #666;">
+                    📍 ACI 2000, Bamako, Mali
+                </p>
+                <p style="margin: 5px 0; color: #666;">
+                    📞 +223 83 69 11 15<br>
+                    📞 +223 72 47 19 35
+                </p>
+                <div style="margin-top: 10px;">
+                    <a href="https://www.google.com/maps/dir/?api=1&destination=12.6392,-8.0029"
+                       target="_blank"
+                       style="background: #98FB98; color: #8B4513; padding: 5px 10px; text-decoration: none; border-radius: 5px; font-size: 12px; font-weight: bold;">
+                        🧭 Itinéraire
+                    </a>
+                </div>
+            </div>
+        `
+    });
+
+    // Ouvrir la fenêtre d'information au clic
+    marker.addListener("click", () => {
+        infoWindow.open(map, marker);
+    });
+
+    // Ouvrir automatiquement la fenêtre d'information
+    infoWindow.open(map, marker);
+}
+
+// Charger la carte quand la page est prête
+window.onload = function() {
+    // Simuler Google Maps (en production, vous devrez inclure l'API Google Maps)
+    if (typeof google === 'undefined') {
+        // Fallback si Google Maps n'est pas disponible
+        document.getElementById('map').innerHTML = `
+            <div class="d-flex align-items-center justify-content-center h-100" style="background: linear-gradient(135deg, #98FB98, #F5F5DC);">
+                <div class="text-center p-4">
+                    <i class="bi bi-geo-alt" style="font-size: 4rem; color: #8B4513; margin-bottom: 20px;"></i>
+                    <h5 style="color: #8B4513; margin-bottom: 15px;">Biodetox Mali</h5>
+                    <p style="color: #8B4513; margin-bottom: 15px;">ACI 2000, Bamako, Mali</p>
+                    <a href="https://www.google.com/maps/search/ACI+2000+Bamako+Mali"
+                       target="_blank"
+                       class="btn btn-primary-custom">
+                        <i class="bi bi-map me-2"></i>Voir sur Google Maps
+                    </a>
+                </div>
+            </div>
+        `;
+    } else {
+        initMap();
+    }
+};
+</script>
+
+<!-- Google Maps API (à décommenter en production) -->
+<!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=VOTRE_CLE_API&callback=initMap"></script> -->
+{% endblock %}

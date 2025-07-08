@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+
+{% block titre %}Paiement réussi - ArabiFit{% endblock %}
+
+{% block contenu %}
+<div class="container-fluid py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="text-center mb-5">
+                <div class="mb-4">
+                    <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                         style="width: 100px; height: 100px; background: linear-gradient(135deg, #28a745, #20c997);">
+                        <i class="bi bi-check-circle-fill text-white" style="font-size: 3rem;"></i>
+                    </div>
+                </div>
+
+                <h1 class="display-5 fw-bold mb-3" style="color: var(--couleur-marron);">
+                    Paiement réussi !
+                </h1>
+
+                <p class="lead text-muted mb-4">
+                    Merci pour votre commande. Votre paiement a été traité avec succès.
+                </p>
+            </div>
+
+            <!-- Informations de commande -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <div class="row text-center">
+                        <div class="col-md-4 mb-3 mb-md-0">
+                            <div class="p-3 rounded" style="background: rgba(255, 182, 193, 0.1);">
+                                <h6 class="fw-bold mb-2" style="color: var(--couleur-marron);">Numéro de commande</h6>
+                                <span class="fs-5 fw-semibold">{{ commande.numero }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3 mb-md-0">
+                            <div class="p-3 rounded" style="background: rgba(255, 182, 193, 0.1);">
+                                <h6 class="fw-bold mb-2" style="color: var(--couleur-marron);">Total payé</h6>
+                                <span class="fs-5 fw-semibold" style="color: var(--couleur-rose-fonce);">
+                                    {{ commande.total|floatformat:0 }} XOF
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 rounded" style="background: rgba(255, 182, 193, 0.1);">
+                                <h6 class="fw-bold mb-2" style="color: var(--couleur-marron);">Date</h6>
+                                <span class="fs-6">{{ commande.date_creation|date:"d/m/Y H:i" }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prochaines étapes -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-0 py-4">
+                    <h5 class="mb-0 fw-bold text-center" style="color: var(--couleur-marron);">
+                        <i class="bi bi-list-check me-2"></i>Prochaines étapes
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-4 mb-4 mb-md-0">
+                            <div class="mb-3">
+                                <div class="rounded-circle d-inline-flex align-items-center justify-content-center"
+                                     style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--couleur-vert-menthe), #90EE90);">
+                                    <i class="bi bi-envelope text-white" style="font-size: 1.5rem;"></i>
+                                </div>
+                            </div>
+                            <h6 class="fw-bold mb-2">Confirmation par email</h6>
+                            <small class="text-muted">Un email de confirmation vous a été envoyé</small>
+                        </div>
+
+                        <div class="col-md-4 mb-4 mb-md-0">
+                            <div class="mb-3">
+                                <div class="rounded-circle d-inline-flex align-items-center justify-content-center"
+                                     style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--couleur-rose-fonce), var(--couleur-rose-principal));">
+                                    <i class="bi bi-box-seam text-white" style="font-size: 1.5rem;"></i>
+                                </div>
+                            </div>
+                            <h6 class="fw-bold mb-2">Préparation</h6>
+                            <small class="text-muted">Votre commande sera préparée sous 24-48h</small>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <div class="rounded-circle d-inline-flex align-items-center justify-content-center"
+                                     style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--couleur-marron), var(--couleur-marron-clair));">
+                                    <i class="bi bi-truck text-white" style="font-size: 1.5rem;"></i>
+                                </div>
+                            </div>
+                            <h6 class="fw-bold mb-2">Expédition</h6>
+                            <small class="text-muted">Vous recevrez un email avec le numéro de suivi</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Informations importantes -->
+            <div class="row mt-5">
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm" style="background: rgba(152, 251, 152, 0.1);">
+                        <div class="card-body p-4">
+                            <h6 class="fw-bold mb-3" style="color: var(--couleur-marron);">
+                                <i class="bi bi-info-circle me-2"></i>Informations importantes
+                            </h6>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <ul class="list-unstyled mb-0">
+                                        <li class="mb-2">
+                                            <i class="bi bi-check-circle text-success me-2"></i>
+                                            Paiement sécurisé de <strong>{{ commande.total|floatformat:0 }} XOF</strong>
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="bi bi-shield-check text-primary me-2"></i>
+                                            Transaction cryptée et protégée
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="bi bi-envelope text-info me-2"></i>
+                                            Email de confirmation envoyé à {{ commande.email }}
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <ul class="list-unstyled mb-0">
+                                        <li class="mb-2">
+                                            <i class="bi bi-truck text-warning me-2"></i>
+                                            Livraison gratuite partout au Mali
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="bi bi-clock text-secondary me-2"></i>
+                                            Délai : 3-5 jours à Bamako, 5-7 jours ailleurs
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="bi bi-headset text-success me-2"></i>
+                                            Support client : +223 83 69 11 15
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="text-center mt-5">
+                <div class="d-flex gap-3 justify-content-center flex-wrap">
+                    <a href="{% url 'boutique:detail_commande' commande.numero %}" class="btn btn-primary-custom btn-lg">
+                        <i class="bi bi-receipt me-2"></i>Voir la commande
+                    </a>
+                    <a href="{% url 'boutique:telecharger_facture' commande.numero %}" class="btn btn-success btn-lg">
+                        <i class="bi bi-download me-2"></i>Télécharger la facture
+                    </a>
+                    <a href="{% url 'boutique:mes_commandes' %}" class="btn btn-secondary-custom btn-lg">
+                        <i class="bi bi-bag me-2"></i>Mes commandes
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

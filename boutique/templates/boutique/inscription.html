@@ -1,0 +1,200 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block titre %}Inscription - Biodetox Mali{% endblock %}
+
+{% block contenu %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="card card-custom shadow-lg position-relative overflow-hidden">
+                <!-- Fond naturel décoratif -->
+                <div class="position-absolute top-0 start-0 w-100 h-100 bg-accent" style="z-index: 1;"></div>
+
+                <div class="card-body p-5 position-relative" style="z-index: 2;">
+                    <div class="text-center mb-4">
+                        <!-- Logo Biodetox Mali -->
+                        <img src="{% static 'images/biodetox-mali-logo.png' %}" alt="Biodetox Mali" class="logo-auth">
+
+                        <h2 class="fw-bold mt-3" style="color: var(--couleur-marron);">Créer un compte</h2>
+                        <p style="color: var(--couleur-marron); opacity: 0.8;">Rejoignez la communauté Biodetox Mali</p>
+                    </div>
+
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.prenom.id_for_label }}" class="form-label fw-semibold" style="color: var(--couleur-marron);">
+                                    <i class="bi bi-person me-2" style="color: var(--couleur-vert-fonce);"></i>Prénom
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-person"></i>
+                                    </span>
+                                    <input type="text" name="prenom" id="{{ form.prenom.id_for_label }}"
+                                           class="form-control" value="{{ form.prenom.value|default:'' }}" required
+                                           style="border-left: none;"
+                                           placeholder="Votre prénom">
+                                </div>
+                                {% if form.prenom.errors %}
+                                    <div class="text-danger small mt-1">{{ form.prenom.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.nom.id_for_label }}" class="form-label fw-semibold" style="color: var(--couleur-marron);">
+                                    <i class="bi bi-person-badge me-2" style="color: var(--couleur-vert-fonce);"></i>Nom
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-person-badge"></i>
+                                    </span>
+                                    <input type="text" name="nom" id="{{ form.nom.id_for_label }}"
+                                           class="form-control" value="{{ form.nom.value|default:'' }}" required
+                                           style="border-left: none;"
+                                           placeholder="Votre nom de famille">
+                                </div>
+                                {% if form.nom.errors %}
+                                    <div class="text-danger small mt-1">{{ form.nom.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.username.id_for_label }}" class="form-label fw-semibold" style="color: var(--couleur-marron);">
+                                <i class="bi bi-at me-2" style="color: var(--couleur-vert-fonce);"></i>Nom d'utilisateur
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="bi bi-at"></i>
+                                </span>
+                                <input type="text" name="username" id="{{ form.username.id_for_label }}"
+                                       class="form-control" value="{{ form.username.value|default:'' }}" required
+                                       style="border-left: none;"
+                                       placeholder="Choisissez un nom d'utilisateur">
+                            </div>
+                            {% if form.username.errors %}
+                                <div class="text-danger small mt-1">{{ form.username.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.email.id_for_label }}" class="form-label fw-semibold" style="color: var(--couleur-marron);">
+                                <i class="bi bi-envelope me-2" style="color: var(--couleur-vert-fonce);"></i>Adresse e-mail
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="bi bi-envelope"></i>
+                                </span>
+                                <input type="email" name="email" id="{{ form.email.id_for_label }}"
+                                       class="form-control" value="{{ form.email.value|default:'' }}" required
+                                       style="border-left: none;"
+                                       placeholder="votre@email.com">
+                            </div>
+                            {% if form.email.errors %}
+                                <div class="text-danger small mt-1">{{ form.email.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.password1.id_for_label }}" class="form-label fw-semibold" style="color: var(--couleur-marron);">
+                                <i class="bi bi-lock me-2" style="color: var(--couleur-vert-fonce);"></i>Mot de passe
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="bi bi-lock"></i>
+                                </span>
+                                <input type="password" name="password1" id="{{ form.password1.id_for_label }}"
+                                       class="form-control" required
+                                       style="border-left: none;"
+                                       placeholder="Choisissez un mot de passe sécurisé">
+                            </div>
+                            {% if form.password1.errors %}
+                                <div class="text-danger small mt-1">{{ form.password1.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="{{ form.password2.id_for_label }}" class="form-label fw-semibold" style="color: var(--couleur-marron);">
+                                <i class="bi bi-lock-fill me-2" style="color: var(--couleur-vert-fonce);"></i>Confirmer le mot de passe
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="bi bi-lock-fill"></i>
+                                </span>
+                                <input type="password" name="password2" id="{{ form.password2.id_for_label }}"
+                                       class="form-control" required
+                                       style="border-left: none;"
+                                       placeholder="Confirmez votre mot de passe">
+                            </div>
+                            {% if form.password2.errors %}
+                                <div class="text-danger small mt-1">{{ form.password2.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-grid mb-4">
+                            <button type="submit" class="btn btn-primary-custom btn-lg">
+                                <i class="bi bi-person-plus me-2"></i>Créer mon compte
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="text-center">
+                        <p class="mb-0" style="color: var(--couleur-marron);">
+                            Déjà un compte ?
+                            <a href="{% url 'boutique:connexion' %}" class="text-decoration-none fw-semibold" style="color: var(--couleur-vert-fonce);">
+                                Se connecter
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Avantages de l'inscription avec fond naturel -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card border-0 bg-accent">
+                        <div class="card-body">
+                            <h6 class="fw-bold text-center mb-4" style="color: var(--couleur-marron);">
+                                <i class="bi bi-gift me-2" style="color: var(--couleur-vert-fonce);"></i>Avantages membre
+                            </h6>
+                            <div class="row text-center">
+                                <div class="col-md-3 col-6 mb-3">
+                                    <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-2"
+                                         style="width: 60px; height: 60px; background: var(--couleur-gradient-vert);">
+                                        <i class="bi bi-cart-check text-white" style="font-size: 1.5rem;"></i>
+                                    </div>
+                                    <small class="d-block fw-semibold" style="color: var(--couleur-marron);">Commandes faciles</small>
+                                </div>
+                                <div class="col-md-3 col-6 mb-3">
+                                    <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-2"
+                                         style="width: 60px; height: 60px; background: var(--couleur-gradient-principal);">
+                                        <i class="bi bi-clock-history text-white" style="font-size: 1.5rem;"></i>
+                                    </div>
+                                    <small class="d-block fw-semibold" style="color: var(--couleur-marron);">Historique d'achats</small>
+                                </div>
+                                <div class="col-md-3 col-6 mb-3">
+                                    <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-2"
+                                         style="width: 60px; height: 60px; background: var(--couleur-gradient-vert);">
+                                        <i class="bi bi-truck text-white" style="font-size: 1.5rem;"></i>
+                                    </div>
+                                    <small class="d-block fw-semibold" style="color: var(--couleur-marron);">Suivi des livraisons</small>
+                                </div>
+                                <div class="col-md-3 col-6 mb-3">
+                                    <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-2"
+                                         style="width: 60px; height: 60px; background: var(--couleur-gradient-principal);">
+                                        <i class="bi bi-percent text-white" style="font-size: 1.5rem;"></i>
+                                    </div>
+                                    <small class="d-block fw-semibold" style="color: var(--couleur-marron);">Offres exclusives</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

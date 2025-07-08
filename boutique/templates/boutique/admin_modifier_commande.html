@@ -1,0 +1,695 @@
+{% extends 'base.html' %}
+
+{% block titre %}Modifier Commande {{ commande.numero }} - Admin ArabiFit{% endblock %}
+
+{% block contenu %}
+<div class="admin-edit-order-page">
+    <!-- En-tête moderne -->
+    <div class="page-header">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <div class="header-content">
+                        <h1 class="page-title">
+                            <i class="bi bi-pencil-square me-3"></i>Modifier Commande
+                        </h1>
+                        <div class="page-breadcrumb">
+                            <span class="order-number">{{ commande.numero }}</span>
+                            <span class="separator">•</span>
+                            <span class="customer-name">{{ commande.utilisateur.get_full_name|default:commande.utilisateur.username }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 text-end">
+                    <div class="header-actions">
+                        <a href="{% url 'boutique:admin_commandes' %}" class="btn btn-outline-light">
+                            <i class="bi bi-arrow-left me-2"></i>Retour aux commandes
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid py-4">
+        <div class="row g-4">
+            <!-- Formulaire de modification -->
+            <div class="col-lg-8">
+                <div class="edit-form-card">
+                    <div class="card-header">
+                        <h5 class="card-title">
+                            <i class="bi bi-gear me-2"></i>Modifier le Statut et les Informations
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" class="modern-form">
+                            {% csrf_token %}
+
+                            <!-- Statut de la commande -->
+                            <div class="form-section">
+                                <h6 class="section-title">
+                                    <i class="bi bi-flag me-2"></i>Statut de la Commande
+                                </h6>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Statut actuel</label>
+                                        <div class="current-status">
+                                            {% if commande.statut == 'en_attente' %}
+                                                <span class="status-badge status-warning">
+                                                    <i class="bi bi-clock me-1"></i>En attente de paiement
+                                                </span>
+                                            {% elif commande.statut == 'confirmee' %}
+                                                <span class="status-badge status-success">
+                                                    <i class="bi bi-check-circle me-1"></i>Confirmée et payée
+                                                </span>
+                                            {% elif commande.statut == 'en_preparation' %}
+                                                <span class="status-badge status-info">
+                                                    <i class="bi bi-box-seam me-1"></i>En préparation
+                                                </span>
+                                            {% elif commande.statut == 'expediee' %}
+                                                <span class="status-badge status-primary">
+                                                    <i class="bi bi-truck me-1"></i>Expédiée
+                                                </span>
+                                            {% elif commande.statut == 'en_livraison' %}
+                                                <span class="status-badge status-secondary">
+                                                    <i class="bi bi-geo-alt me-1"></i>En cours de livraison
+                                                </span>
+                                            {% elif commande.statut == 'livree' %}
+                                                <span class="status-badge status-dark">
+                                                    <i class="bi bi-house-door me-1"></i>Livrée
+                                                </span>
+                                            {% elif commande.statut == 'annulee' %}
+                                                <span class="status-badge status-danger">
+                                                    <i class="bi bi-x-circle me-1"></i>Annulée
+                                                </span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Nouveau statut</label>
+                                        <select name="statut" class="form-select modern-select" required>
+                                            <option value="en_attente" {% if commande.statut == 'en_attente' %}selected{% endif %}>En attente de paiement</option>
+                                            <option value="confirmee" {% if commande.statut == 'confirmee' %}selected{% endif %}>Confirmée et payée</option>
+                                            <option value="en_preparation" {% if commande.statut == 'en_preparation' %}selected{% endif %}>En préparation</option>
+                                            <option value="expediee" {% if commande.statut == 'expediee' %}selected{% endif %}>Expédiée</option>
+                                            <option value="en_livraison" {% if commande.statut == 'en_livraison' %}selected{% endif %}>En cours de livraison</option>
+                                            <option value="livree" {% if commande.statut == 'livree' %}selected{% endif %}>Livrée</option>
+                                            <option value="annulee" {% if commande.statut == 'annulee' %}selected{% endif %}>Annulée</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Informations de suivi -->
+                            <div class="form-section">
+                                <h6 class="section-title">
+                                    <i class="bi bi-truck me-2"></i>Informations de Suivi
+                                </h6>
+                                <div class="row g-3">
+                                    <div class="col-12">
+                                        <label class="form-label">Numéro de suivi</label>
+                                        <input type="text" name="numero_suivi" class="form-control modern-input"
+                                               value="{{ commande.numero_suivi }}"
+                                               placeholder="Ex: TRK123456789, DHL987654321">
+                                        <div class="form-text">
+                                            <i class="bi bi-info-circle me-1"></i>
+                                            Numéro de suivi fourni par le transporteur (optionnel)
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Notes administratives -->
+                            <div class="form-section">
+                                <h6 class="section-title">
+                                    <i class="bi bi-journal-text me-2"></i>Notes Administratives
+                                </h6>
+                                <div class="row g-3">
+                                    <div class="col-12">
+                                        <label class="form-label">Notes internes</label>
+                                        <textarea name="notes_admin" class="form-control modern-textarea" rows="4"
+                                                  placeholder="Notes internes sur cette commande (non visibles par le client)...">{{ commande.notes_admin }}</textarea>
+                                        <div class="form-text">
+                                            <i class="bi bi-lock me-1"></i>
+                                            Ces notes ne sont visibles que par l'équipe administrative
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary-modern btn-lg">
+                                    <i class="bi bi-check-circle me-2"></i>Mettre à jour la commande
+                                </button>
+                                <a href="{% url 'boutique:admin_commandes' %}" class="btn btn-outline-secondary btn-lg">
+                                    <i class="bi bi-x me-2"></i>Annuler
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Informations de la commande -->
+            <div class="col-lg-4">
+                <div class="sticky-sidebar">
+                    <!-- Résumé de la commande -->
+                    <div class="info-card">
+                        <div class="card-header">
+                            <h5 class="card-title">
+                                <i class="bi bi-info-circle me-2"></i>Informations de la Commande
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="info-item">
+                                <label>Numéro</label>
+                                <value>{{ commande.numero }}</value>
+                            </div>
+                            <div class="info-item">
+                                <label>Date de création</label>
+                                <value>{{ commande.date_creation|date:"d F Y à H:i" }}</value>
+                            </div>
+                            <div class="info-item">
+                                <label>Client</label>
+                                <value>{{ commande.nom_complet }}</value>
+                            </div>
+                            <div class="info-item">
+                                <label>Email</label>
+                                <value>{{ commande.email }}</value>
+                            </div>
+                            <div class="info-item">
+                                <label>Téléphone</label>
+                                <value>{{ commande.telephone }}</value>
+                            </div>
+                            <div class="info-item">
+                                <label>Total</label>
+                                <value class="amount">{{ commande.total|floatformat:0 }} XOF</value>
+                            </div>
+                            <div class="info-item">
+                                <label>Méthode de paiement</label>
+                                <value>{{ commande.get_methode_paiement_display }}</value>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Adresse de livraison -->
+                    <div class="info-card">
+                        <div class="card-header">
+                            <h5 class="card-title">
+                                <i class="bi bi-geo-alt me-2"></i>Adresse de Livraison
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="address-block">
+                                <div class="address-line">{{ commande.adresse }}</div>
+                                <div class="address-line">{{ commande.code_postal }} {{ commande.ville }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Historique des dates -->
+                    <div class="info-card">
+                        <div class="card-header">
+                            <h5 class="card-title">
+                                <i class="bi bi-clock-history me-2"></i>Historique
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="timeline">
+                                <div class="timeline-item active">
+                                    <div class="timeline-marker"></div>
+                                    <div class="timeline-content">
+                                        <div class="timeline-title">Commande créée</div>
+                                        <div class="timeline-date">{{ commande.date_creation|date:"d/m/Y H:i" }}</div>
+                                    </div>
+                                </div>
+
+                                {% if commande.date_confirmation %}
+                                <div class="timeline-item active">
+                                    <div class="timeline-marker"></div>
+                                    <div class="timeline-content">
+                                        <div class="timeline-title">Confirmée et payée</div>
+                                        <div class="timeline-date">{{ commande.date_confirmation|date:"d/m/Y H:i" }}</div>
+                                    </div>
+                                </div>
+                                {% endif %}
+
+                                {% if commande.date_expedition %}
+                                <div class="timeline-item active">
+                                    <div class="timeline-marker"></div>
+                                    <div class="timeline-content">
+                                        <div class="timeline-title">Expédiée</div>
+                                        <div class="timeline-date">{{ commande.date_expedition|date:"d/m/Y H:i" }}</div>
+                                    </div>
+                                </div>
+                                {% endif %}
+
+                                {% if commande.date_livraison %}
+                                <div class="timeline-item active">
+                                    <div class="timeline-marker"></div>
+                                    <div class="timeline-content">
+                                        <div class="timeline-title">Livrée</div>
+                                        <div class="timeline-date">{{ commande.date_livraison|date:"d/m/Y H:i" }}</div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Articles de la commande -->
+                    <div class="info-card">
+                        <div class="card-header">
+                            <h5 class="card-title">
+                                <i class="bi bi-box me-2"></i>Articles ({{ commande.items.count }})
+                            </h5>
+                        </div>
+                        <div class="card-body p-0">
+                            {% for item in commande.items.all %}
+                            <div class="order-item">
+                                {% if item.produit.image %}
+                                    <img src="{{ item.produit.image.url }}" alt="{{ item.nom_produit }}" class="item-image">
+                                {% else %}
+                                    <div class="item-image-placeholder">
+                                        <i class="bi bi-box"></i>
+                                    </div>
+                                {% endif %}
+                                <div class="item-details">
+                                    <div class="item-name">{{ item.nom_produit }}</div>
+                                    <div class="item-quantity">{{ item.quantite }} × {{ item.prix_unitaire|floatformat:0 }} XOF</div>
+                                </div>
+                                <div class="item-total">{{ item.total|floatformat:0 }} XOF</div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Variables */
+:root {
+    --admin-primary: #667eea;
+    --admin-success: #28a745;
+    --admin-warning: #ffc107;
+    --admin-danger: #dc3545;
+    --admin-info: #17a2b8;
+    --admin-secondary: #6c757d;
+    --admin-dark: #343a40;
+    --admin-light: #f8f9fa;
+    --admin-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+    --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+    --border-radius: 12px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Page générale */
+.admin-edit-order-page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+/* En-tête */
+.page-header {
+    background: var(--admin-gradient);
+    color: white;
+    padding: 2rem 0;
+}
+
+.page-title {
+    font-size: 2.25rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.page-breadcrumb {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+.order-number {
+    font-weight: 600;
+    background: rgba(255,255,255,0.2);
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+}
+
+.separator {
+    margin: 0 1rem;
+}
+
+/* Cartes */
+.edit-form-card,
+.info-card {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+}
+
+.card-header {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--admin-dark);
+    margin-bottom: 0;
+}
+
+.card-body {
+    padding: 2rem;
+}
+
+/* Formulaire moderne */
+.modern-form {
+    max-width: 100%;
+}
+
+.form-section {
+    margin-bottom: 2.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.form-section:last-of-type {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--admin-dark);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--admin-primary);
+    display: inline-block;
+}
+
+.modern-select,
+.modern-input,
+.modern-textarea {
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    transition: var(--transition);
+    background: white;
+    font-size: 0.95rem;
+}
+
+.modern-select:focus,
+.modern-input:focus,
+.modern-textarea:focus {
+    border-color: var(--admin-primary);
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.current-status {
+    padding: 0.75rem 0;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-warning { background: rgba(255, 193, 7, 0.2); color: #856404; }
+.status-success { background: rgba(40, 167, 69, 0.2); color: #155724; }
+.status-info { background: rgba(23, 162, 184, 0.2); color: #0c5460; }
+.status-primary { background: rgba(102, 126, 234, 0.2); color: #4c63d2; }
+.status-secondary { background: rgba(108, 117, 125, 0.2); color: #495057; }
+.status-dark { background: rgba(52, 58, 64, 0.2); color: #212529; }
+.status-danger { background: rgba(220, 53, 69, 0.2); color: #721c24; }
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(0,0,0,0.1);
+}
+
+.btn-primary-modern {
+    background: var(--admin-gradient);
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem 2rem;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.btn-primary-modern:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Sidebar sticky */
+.sticky-sidebar {
+    position: sticky;
+    top: 2rem;
+}
+
+/* Informations */
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+.info-item label {
+    font-weight: 500;
+    color: #6b7280;
+    font-size: 0.9rem;
+    margin-bottom: 0;
+    flex-shrink: 0;
+    width: 40%;
+}
+
+.info-item value {
+    font-weight: 500;
+    color: var(--admin-dark);
+    text-align: right;
+    flex-grow: 1;
+}
+
+.info-item .amount {
+    font-weight: 700;
+    color: var(--admin-success);
+    font-size: 1.1rem;
+}
+
+/* Adresse */
+.address-block {
+    background: rgba(102, 126, 234, 0.05);
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 4px solid var(--admin-primary);
+}
+
+.address-line {
+    margin-bottom: 0.5rem;
+    color: var(--admin-dark);
+    font-weight: 500;
+}
+
+.address-line:last-child {
+    margin-bottom: 0;
+}
+
+/* Timeline */
+.timeline {
+    position: relative;
+    padding-left: 2rem;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 0.75rem;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #e9ecef;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.timeline-item:last-child {
+    margin-bottom: 0;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -1.75rem;
+    top: 0.25rem;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #e9ecef;
+    border: 3px solid white;
+    box-shadow: 0 0 0 2px #e9ecef;
+}
+
+.timeline-item.active .timeline-marker {
+    background: var(--admin-success);
+    box-shadow: 0 0 0 2px var(--admin-success);
+}
+
+.timeline-title {
+    font-weight: 600;
+    color: var(--admin-dark);
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+}
+
+.timeline-date {
+    font-size: 0.8rem;
+    color: #6b7280;
+}
+
+/* Articles de commande */
+.order-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem 2rem;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.order-item:last-child {
+    border-bottom: none;
+}
+
+.item-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    object-fit: cover;
+    margin-right: 1rem;
+}
+
+.item-image-placeholder {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    background: var(--admin-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    color: #6b7280;
+}
+
+.item-details {
+    flex-grow: 1;
+}
+
+.item-name {
+    font-weight: 600;
+    color: var(--admin-dark);
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+}
+
+.item-quantity {
+    font-size: 0.8rem;
+    color: #6b7280;
+}
+
+.item-total {
+    font-weight: 700;
+    color: var(--admin-success);
+    font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .page-title {
+        font-size: 1.75rem;
+    }
+
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .sticky-sidebar {
+        position: static;
+    }
+
+    .info-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .info-item label {
+        width: 100%;
+    }
+
+    .info-item value {
+        text-align: left;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animation d'entrée
+    const cards = document.querySelectorAll('.edit-form-card, .info-card');
+
+    cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(30px)';
+
+        setTimeout(() => {
+            card.style.transition = 'all 0.6s ease-out';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, index * 200);
+    });
+
+    // Auto-save des notes (optionnel)
+    const notesTextarea = document.querySelector('textarea[name="notes_admin"]');
+    if (notesTextarea) {
+        let saveTimeout;
+
+        notesTextarea.addEventListener('input', function() {
+            clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(() => {
+                console.log('Auto-save des notes...');
+            }, 2000);
+        });
+    }
+});
+</script>
+{% endblock %}
